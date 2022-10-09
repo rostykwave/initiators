@@ -1,11 +1,14 @@
 import { Account } from 'src/accounts/account.entity';
 import { Guest } from 'src/guests/guests.entity';
+import { Room } from 'src/rooms/rooms.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 export enum DaysOfWeek {
@@ -47,4 +50,8 @@ export class Booking {
 
   @OneToMany(() => Guest, (guest) => guest.Guest_ID)
   guest: Guest;
+
+  @OneToOne(() => Room, (room) => room.Room_ID)
+  @JoinColumn()
+  Room_ID: Room;
 }
