@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Room } from 'src/rooms/rooms.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Room_Type {
@@ -10,4 +11,7 @@ export class Room_Type {
 
   @Column()
   description: string;
+
+  @OneToMany(() => Room, (room) => room.Type_ID)
+  room: Room;
 }

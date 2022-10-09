@@ -1,10 +1,11 @@
+import { Booking } from 'src/bookings/bookings.entity';
 import { Room_Type } from 'src/room_type/room_type.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToOne,
-  JoinColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -24,7 +25,9 @@ export class Room {
   @Column()
   minPeople: number;
 
-  @OneToOne(() => Room_Type, (room_type) => room_type.Type_ID)
-  @JoinColumn()
+  @OneToMany(() => Booking, (booking) => booking.Room_ID)
+  booking: Booking;
+
+  @ManyToOne(() => Room_Type, (room_type) => room_type.Type_ID)
   Type_ID: Room_Type;
 }

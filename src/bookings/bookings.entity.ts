@@ -51,7 +51,6 @@ export class Booking {
   @OneToMany(() => Guest, (guest) => guest.Guest_ID)
   guest: Guest;
 
-  @OneToOne(() => Room, (room) => room.Room_ID)
-  @JoinColumn()
+  @ManyToOne(() => Room, (room) => room.Room_ID)
   Room_ID: Room;
 }
