@@ -1,4 +1,4 @@
-import { Booking } from 'src/bookings/bookings.entity';
+import { Booking } from 'src/bookings/booking.entity';
 import { Room_Type } from 'src/room_type/room_type.entity';
 import {
   Entity,
@@ -28,6 +28,6 @@ export class Room {
   @OneToMany(() => Booking, (booking) => booking.Room_ID)
   booking: Booking;
 
-  @ManyToOne(() => Room_Type, (room_type) => room_type.Type_ID)
+  @ManyToOne(() => Room_Type, (room_type) => room_type.room)
   Type_ID: Room_Type;
 }

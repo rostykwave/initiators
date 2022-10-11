@@ -1,14 +1,12 @@
 import { Account } from 'src/accounts/account.entity';
-import { Guest } from 'src/guests/guests.entity';
-import { Room } from 'src/rooms/rooms.entity';
+import { Guest } from 'src/guests/guest.entity';
+import { Room } from 'src/rooms/room.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
-  JoinColumn,
 } from 'typeorm';
 
 export enum DaysOfWeek {

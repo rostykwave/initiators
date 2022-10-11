@@ -1,5 +1,5 @@
-import { Booking } from 'src/bookings/bookings.entity';
-import { Guest } from 'src/guests/guests.entity';
+import { Booking } from 'src/bookings/booking.entity';
+import { Guest } from 'src/guests/guest.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 export enum Role {
