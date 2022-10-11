@@ -5,7 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import { AccountsModule } from './accounts/accounts.module';
-
+import { Account } from './accounts/account.entity';
+import { Booking } from './bookings/bookings.entity';
+import { Guest } from './guests/guests.entity';
+import { Room_Type } from './room_type/room_type.entity';
+import { Room } from './rooms/rooms.entity';
 const configService = new ConfigService();
 
 @Module({
@@ -18,6 +22,7 @@ const configService = new ConfigService();
       username: configService.get<string>('PGUSER'),
       password: configService.get<string>('PGPASSWORD'),
       database: configService.get<string>('PGDATABASE'),
+      entities: [Account, Booking, Guest, Room_Type, Room],
       autoLoadEntities: true,
       // migrations: [
       //   /*...*/
