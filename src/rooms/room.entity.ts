@@ -11,7 +11,7 @@ import {
 @Entity()
 export class Room {
   @PrimaryGeneratedColumn()
-  Room_ID: number;
+  id: number;
 
   @Column()
   name: string;
@@ -25,7 +25,7 @@ export class Room {
   @Column()
   minPeople: number;
 
-  @OneToMany(() => Booking, (booking) => booking.Room_ID)
+  @OneToMany(() => Booking, (booking) => booking.id)
   booking: Booking;
 
   @ManyToOne(() => Room_Type, (room_type) => room_type.room)

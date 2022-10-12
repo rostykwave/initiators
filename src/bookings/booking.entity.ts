@@ -10,45 +10,44 @@ import {
 } from 'typeorm';
 
 export enum DaysOfWeek {
-  Mon = 'Monday',
-  Tue = 'Tuesday',
-  Wed = 'Wednesday',
-  Thu = 'Thursday',
-  Fri = 'Friday',
-  Sat = 'Saturday',
-  Sun = 'Sunday',
+  Monday = 'Monday',
+  Tuesday = 'Tuesday',
+  Wednesday = 'Wednesday',
+  Thursday = 'Thursday',
+  Friday = 'Friday',
+  Saturday = 'Saturday',
+  Sunday = 'Sunday',
 }
 
 @Entity()
 export class Booking {
   @PrimaryGeneratedColumn()
-  Booking_ID: number;
+  id: number;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Column({ type: 'time', nullable: true })
+  @Column({ type: 'time' })
   startTime: Date;
 
-  @Column({ type: 'time', nullable: true })
+  @Column({ type: 'time' })
   endTime: Date;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: 'timestamptz' })
   meetingDate: Date;
 
   @Column({
     type: 'enum',
     enum: DaysOfWeek,
-    default: DaysOfWeek.Mon,
   })
   daysOfWeek: DaysOfWeek;
 
-  @ManyToOne(() => Account, (account) => account.Account_ID)
+  @ManyToOne(() => Account, (account) => account.id)
   Account_ID: Account;
 
-  @OneToMany(() => Guest, (guest) => guest.Guest_ID)
+  @OneToMany(() => Guest, (guest) => guest.id)
   guest: Guest;
 
-  @ManyToOne(() => Room, (room) => room.Room_ID)
+  @ManyToOne(() => Room, (room) => room.id)
   Room_ID: Room;
 }

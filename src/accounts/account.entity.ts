@@ -3,7 +3,6 @@ import { Guest } from 'src/guests/guest.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 export enum Role {
-  GUEST = 'Guest',
   USER = 'User',
   ADMIN = 'Admin',
 }
@@ -11,7 +10,7 @@ export enum Role {
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn()
-  Account_ID: number;
+  id: number;
 
   @Column()
   firstName: string;
@@ -28,13 +27,13 @@ export class Account {
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.GUEST,
+    default: Role.USER,
   })
   role: Role;
 
-  @OneToMany(() => Booking, (booking) => booking.Booking_ID)
+  @OneToMany(() => Booking, (booking) => booking.id)
   booking: Booking;
 
-  @OneToMany(() => Guest, (guest) => guest.Owner_ID)
+  @OneToMany(() => Guest, (guest) => guest.id)
   guest: Guest;
 }

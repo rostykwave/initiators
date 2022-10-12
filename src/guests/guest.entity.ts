@@ -5,11 +5,11 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 @Entity()
 export class Guest {
   @PrimaryGeneratedColumn()
-  Guest_ID: number;
+  id: number;
 
-  @ManyToOne(() => Account, (account) => account.Account_ID)
+  @ManyToOne(() => Account, (account) => account.id)
   Owner_ID: Account;
 
-  @ManyToOne(() => Booking, (booking) => booking.Booking_ID)
+  @ManyToOne(() => Booking, (booking) => booking.id)
   Booking_ID: Booking;
 }
