@@ -23,11 +23,9 @@ const configService = new ConfigService();
       password: configService.get<string>('PGPASSWORD'),
       database: configService.get<string>('PGDATABASE'),
       autoLoadEntities: true,
-      // migrations: [
-      //   /*...*/
-      // ],
-      // migrationsTableName: 'migrations',
-      synchronize: true,
+      synchronize: false,
+      migrations: ['dist/src/migrations/*.js'],
+      migrationsTableName: 'migrations',
     }),
     AccountsModule,
     BookingsModule,
