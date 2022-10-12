@@ -6,7 +6,7 @@ import { Booking } from './src/bookings/booking.entity';
 import { Guest } from './src/guests/guest.entity';
 import { Room } from './src/rooms/room.entity';
 import { RoomType } from './src/roomType/roomType.entity';
-import { $npmConfigName1665606830506 } from './src/migrations/1665606830506-$npm_config_name';
+import { loadEntities1665606830506 } from './src/migrations/1665606830506-loadEntities';
 
 config();
 
@@ -20,5 +20,5 @@ export default new DataSource({
   password: configService.get('PGPASSWORD'),
   database: configService.get('PGDATABASE'),
   entities: [Account, Booking, Guest, Room, RoomType],
-  migrations: [$npmConfigName1665606830506],
+  migrations: [loadEntities1665606830506],
 });
