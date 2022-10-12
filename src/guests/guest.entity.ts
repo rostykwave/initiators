@@ -1,5 +1,5 @@
-import { Account } from 'src/accounts/account.entity';
-import { Booking } from 'src/bookings/booking.entity';
+import { Account } from '../accounts/account.entity';
+import { Booking } from '../bookings/booking.entity';
 import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity()

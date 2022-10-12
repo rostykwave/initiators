@@ -1,5 +1,5 @@
-import { Booking } from 'src/bookings/booking.entity';
-import { RoomType } from 'src/roomType/roomType.entity';
+import { Booking } from '../bookings/booking.entity';
+import { RoomType } from '../roomType/roomType.entity';
 import {
   Entity,
   Column,

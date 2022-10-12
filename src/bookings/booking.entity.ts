@@ -1,6 +1,6 @@
-import { Account } from 'src/accounts/account.entity';
-import { Guest } from 'src/guests/guest.entity';
-import { Room } from 'src/rooms/room.entity';
+import { Account } from '../accounts/account.entity';
+import { Guest } from '../guests/guest.entity';
+import { Room } from '../rooms/room.entity';
 import {
   Entity,
   Column,
