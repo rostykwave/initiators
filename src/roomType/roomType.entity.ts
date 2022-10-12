@@ -2,7 +2,7 @@ import { Room } from 'src/rooms/room.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
-export class Room_Type {
+export class RoomType {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,5 +13,5 @@ export class Room_Type {
   description: string;
 
   @OneToMany(() => Room, (room) => room.id)
-  room: Room;
+  room: Room[];
 }

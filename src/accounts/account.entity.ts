@@ -32,8 +32,8 @@ export class Account {
   role: Role;
 
   @OneToMany(() => Booking, (booking) => booking.id)
-  booking: Booking;
+  booking: Booking[];
 
   @OneToMany(() => Guest, (guest) => guest.id)
-  guest: Guest;
+  guest: Guest[];
 }

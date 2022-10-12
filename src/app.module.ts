@@ -7,7 +7,7 @@ import { DataSource } from 'typeorm';
 import { AccountsModule } from './accounts/accounts.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { GuestsModule } from './guests/guests.module';
-import { Room_TypesModule } from './room_type/room_types.module';
+import { RoomTypesModule } from './roomType/roomTypes.module';
 import { RoomsModule } from './rooms/rooms.module';
 
 const configService = new ConfigService();
@@ -32,7 +32,7 @@ const configService = new ConfigService();
     BookingsModule,
     GuestsModule,
     RoomsModule,
-    Room_TypesModule,
+    RoomTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

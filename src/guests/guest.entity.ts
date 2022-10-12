@@ -8,8 +8,8 @@ export class Guest {
   id: number;
 
   @ManyToOne(() => Account, (account) => account.id)
-  Owner_ID: Account;
+  owner: Account;
 
   @ManyToOne(() => Booking, (booking) => booking.id)
-  Booking_ID: Booking;
+  booking: Booking;
 }
