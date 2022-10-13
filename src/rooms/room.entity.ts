@@ -17,6 +17,9 @@ export class Room {
   name: string;
 
   @Column()
+  floor: number;
+
+  @Column()
   description: string;
 
   @Column()
