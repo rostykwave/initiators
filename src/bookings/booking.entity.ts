@@ -1,6 +1,6 @@
-import { Account } from 'src/accounts/account.entity';
-import { Guest } from 'src/guests/guest.entity';
-import { Room } from 'src/rooms/room.entity';
+import { Account } from '../accounts/account.entity';
+import { Guest } from '../guests/guest.entity';
+import { Room } from '../rooms/room.entity';
 import {
   Entity,
   Column,
@@ -39,15 +39,16 @@ export class Booking {
   @Column({
     type: 'enum',
     enum: DaysOfWeek,
+    nullable: true,
   })
   daysOfWeek: DaysOfWeek;
 
   @ManyToOne(() => Account, (account) => account.id)
-  Account_ID: Account;
-
-  @OneToMany(() => Guest, (guest) => guest.id)
-  guest: Guest;
+  account: Account;
 
   @ManyToOne(() => Room, (room) => room.id)
-  Room_ID: Room;
+  room: Room;
+
+  @OneToMany(() => Guest, (guest) => guest.id)
+  guest: Guest[];
 }

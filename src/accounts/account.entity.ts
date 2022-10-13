@@ -1,5 +1,5 @@
-import { Booking } from 'src/bookings/booking.entity';
-import { Guest } from 'src/guests/guest.entity';
+import { Booking } from '../bookings/booking.entity';
+import { Guest } from '../guests/guest.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 export enum Role {
@@ -11,6 +11,11 @@ export enum Role {
 export class Account {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    default: false,
+  })
+  approved: boolean;
 
   @Column()
   firstName: string;
@@ -32,8 +37,8 @@ export class Account {
   role: Role;
 
   @OneToMany(() => Booking, (booking) => booking.id)
-  booking: Booking;
+  booking: Booking[];
 
   @OneToMany(() => Guest, (guest) => guest.id)
-  guest: Guest;
+  guest: Guest[];
 }
