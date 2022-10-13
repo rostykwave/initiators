@@ -12,6 +12,11 @@ export class Account {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({
+    default: false,
+  })
+  approved: boolean;
+
   @Column()
   firstName: string;
 
