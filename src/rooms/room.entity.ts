@@ -1,5 +1,5 @@
-import { Booking } from '../bookings/booking.entity';
-import { Office } from '../office/office.entity';
+import { RecurringBooking } from '../recurringBookings/recurringBooking.entity';
+import { Office } from '../offices/office.entity';
 import {
   Entity,
   Column,
@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
+import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
 
 @Entity()
 export class Room {
@@ -28,8 +29,14 @@ export class Room {
   @Column()
   minPeople: number;
 
-  @OneToMany(() => Booking, (booking) => booking.room)
-  bookings: Booking[];
+  @OneToMany(() => OneTimeBooking, (oneTimeBooking) => oneTimeBooking.room)
+  oneTimeBookings: OneTimeBooking[];
+
+  @OneToMany(
+    () => RecurringBooking,
+    (recurringBooking) => recurringBooking.room,
+  )
+  recurringBookings: RecurringBooking[];
 
   @ManyToOne(() => Office, (office) => office.rooms)
   office: Office;
