@@ -36,9 +36,9 @@ export class Account {
   })
   role: Role;
 
-  @OneToMany(() => Booking, (booking) => booking.id)
-  booking: Booking[];
+  @OneToMany(() => Booking, (booking) => booking.owner)
+  bookings: Booking[];
 
-  @OneToMany(() => Guest, (guest) => guest.id)
-  guest: Guest[];
+  @OneToMany(() => Guest, (guest) => guest.owner)
+  guests: Guest[];
 }

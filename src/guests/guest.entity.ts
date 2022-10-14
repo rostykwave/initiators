@@ -7,9 +7,12 @@ export class Guest {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Account, (account) => account.id)
+  @ManyToOne(() => Account, (account) => account.guests)
+  guest: Account;
+
+  @ManyToOne(() => Account, (account) => account.guests)
   owner: Account;
 
-  @ManyToOne(() => Booking, (booking) => booking.id)
+  @ManyToOne(() => Booking, (booking) => booking.guests)
   booking: Booking;
 }

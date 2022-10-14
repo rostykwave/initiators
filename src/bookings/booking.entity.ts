@@ -33,22 +33,23 @@ export class Booking {
   @Column({ type: 'time' })
   endTime: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz', nullable: true })
   meetingDate: Date;
 
   @Column({
     type: 'enum',
     enum: DaysOfWeek,
+    array: true,
     nullable: true,
   })
-  daysOfWeek: DaysOfWeek;
+  daysOfWeek: DaysOfWeek[];
 
-  @ManyToOne(() => Account, (account) => account.id)
-  account: Account;
+  @ManyToOne(() => Account, (account) => account.bookings)
+  owner: Account;
 
-  @ManyToOne(() => Room, (room) => room.id)
+  @ManyToOne(() => Room, (room) => room.bookings)
   room: Room;
 
-  @OneToMany(() => Guest, (guest) => guest.id)
-  guest: Guest[];
+  @OneToMany(() => Guest, (guest) => guest.booking)
+  guests: Guest[];
 }

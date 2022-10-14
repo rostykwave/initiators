@@ -1,5 +1,5 @@
 import { Booking } from '../bookings/booking.entity';
-import { RoomType } from '../roomType/roomType.entity';
+import { Office } from '../office/office.entity';
 import {
   Entity,
   Column,
@@ -28,9 +28,9 @@ export class Room {
   @Column()
   minPeople: number;
 
-  @OneToMany(() => Booking, (booking) => booking.id)
-  booking: Booking[];
+  @OneToMany(() => Booking, (booking) => booking.room)
+  bookings: Booking[];
 
-  @ManyToOne(() => RoomType, (roomType) => roomType.room)
-  roomType: RoomType;
+  @ManyToOne(() => Office, (office) => office.rooms)
+  office: Office;
 }
