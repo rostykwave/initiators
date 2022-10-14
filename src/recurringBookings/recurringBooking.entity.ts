@@ -20,12 +20,18 @@ export enum DaysOfWeek {
 }
 
 @Entity()
-export class Booking {
+export class RecurringBooking {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'timestamptz' })
   createdAt: Date;
+
+  @Column({ type: 'timestamptz' })
+  startDate: Date;
+
+  @Column({ type: 'timestamptz' })
+  endDate: Date;
 
   @Column({ type: 'time' })
   startTime: Date;
@@ -33,22 +39,20 @@ export class Booking {
   @Column({ type: 'time' })
   endTime: Date;
 
-  @Column({ type: 'timestamptz' })
-  meetingDate: Date;
-
   @Column({
     type: 'enum',
     enum: DaysOfWeek,
+    array: true,
     nullable: true,
   })
-  daysOfWeek: DaysOfWeek;
+  daysOfWeek: DaysOfWeek[];
 
-  @ManyToOne(() => Account, (account) => account.id)
-  account: Account;
+  @ManyToOne(() => Account, (account) => account.recurringBookings)
+  owner: Account;
 
-  @ManyToOne(() => Room, (room) => room.id)
+  @ManyToOne(() => Room, (room) => room.recurringBookings)
   room: Room;
 
-  @OneToMany(() => Guest, (guest) => guest.id)
-  guest: Guest[];
+  @OneToMany(() => Guest, (guest) => guest.recurringBooking)
+  guests: Guest[];
 }

@@ -15,7 +15,7 @@ export class AuthService {
     const account = await this.accountsService.getAccountByEmail(email);
     if (account) {
       const passwordEquals = await bcrypt.compare(password, account.password);
-      if (account && passwordEquals) {
+      if (passwordEquals) {
         const { password, ...rest } = account;
         return rest;
       }

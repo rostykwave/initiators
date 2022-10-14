@@ -1,6 +1,7 @@
-import { Booking } from '../bookings/booking.entity';
+import { RecurringBooking } from '../recurringBookings/recurringBooking.entity';
 import { Guest } from '../guests/guest.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
 
 export enum Role {
   USER = 'User',
@@ -17,6 +18,13 @@ export class Account {
   })
   approved: boolean;
 
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
+
   @Column()
   firstName: string;
 
@@ -29,16 +37,15 @@ export class Account {
   @Column()
   password: string;
 
-  @Column({
-    type: 'enum',
-    enum: Role,
-    default: Role.USER,
-  })
-  role: Role;
+  @OneToMany(() => OneTimeBooking, (oneTimeBooking) => oneTimeBooking.owner)
+  oneTimeBookings: OneTimeBooking[];
 
-  @OneToMany(() => Booking, (booking) => booking.id)
-  booking: Booking[];
+  @OneToMany(
+    () => RecurringBooking,
+    (recurringBooking) => recurringBooking.owner,
+  )
+  recurringBookings: RecurringBooking[];
 
-  @OneToMany(() => Guest, (guest) => guest.id)
-  guest: Guest[];
+  @OneToMany(() => Guest, (guest) => guest.owner)
+  guests: Guest[];
 }

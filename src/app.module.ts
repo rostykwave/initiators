@@ -3,29 +3,28 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-// import { DataSource } from 'typeorm';
 import { AccountsModule } from './accounts/accounts.module';
-import { BookingsModule } from './bookings/bookings.module';
+import { RecurringBookingsModule } from './recurringBookings/recurringBookings.module';
 import { GuestsModule } from './guests/guests.module';
-import { RoomTypesModule } from './roomType/roomTypes.module';
+import { OfficesModule } from './offices/offices.module';
 import { RoomsModule } from './rooms/rooms.module';
-import { AuthModule } from './auth/auth.module';
 import { AppDataSource } from 'ormconfig';
+import { OneTimeBookingsModule } from './oneTimeBookings/oneTimeBookings.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(AppDataSource.options),
     AccountsModule,
-    BookingsModule,
+    OneTimeBookingsModule,
+    RecurringBookingsModule,
     GuestsModule,
     RoomsModule,
-    RoomTypesModule,
+    OfficesModule,
     AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  // constructor(private dataSource: DataSource) {}
-}
+export class AppModule {}
