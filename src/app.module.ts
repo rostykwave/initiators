@@ -10,6 +10,7 @@ import { OfficesModule } from './offices/offices.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { AppDataSource } from 'ormconfig';
 import { OneTimeBookingsModule } from './oneTimeBookings/oneTimeBookings.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { OneTimeBookingsModule } from './oneTimeBookings/oneTimeBookings.module'
     GuestsModule,
     RoomsModule,
     OfficesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

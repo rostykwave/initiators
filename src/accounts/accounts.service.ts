@@ -11,7 +11,7 @@ export class AccountsService {
     private readonly accountRepository: Repository<Account>,
   ) {}
 
-  create(createAccountDto: CreateAccountDto): Promise<Account> {
+  async create(createAccountDto: CreateAccountDto): Promise<Account> {
     const account = new Account();
     account.firstName = createAccountDto.firstName;
     account.lastName = createAccountDto.lastName;
@@ -21,15 +21,20 @@ export class AccountsService {
     return this.accountRepository.save(account);
   }
 
-  findAll(): Promise<Account[]> {
+  async findAll(): Promise<Account[]> {
     return this.accountRepository.find();
   }
 
-  findOne(id: number): Promise<Account> {
+  async findOne(id: number): Promise<Account> {
     return this.accountRepository.findOneBy({ id });
   }
 
   async remove(id: number): Promise<void> {
     await this.accountRepository.delete(id);
+  }
+
+  async getAccountByEmail(email: string): Promise<Account> {
+    const account = await this.accountRepository.findOne({ where: { email } });
+    return account;
   }
 }
