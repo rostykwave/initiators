@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { Account } from 'src/accounts/account.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
+import { CreateAccountDto } from 'src/accounts/dto/create-account.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +11,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateAccount(email: string, password: string) {
+  async validateAccount(email: string, password: string): Promise<any> {
     const account = await this.accountsService.getAccountByEmail(email);
     if (account) {
       const passwordEquals = await bcrypt.compare(password, account.password);
@@ -23,11 +23,11 @@ export class AuthService {
     return null;
   }
 
-  async login(account: Account) {
+  async login(account: CreateAccountDto): Promise<any> {
     return this.generateToken(account);
   }
 
-  async registration(account: Account) {
+  async register(account: CreateAccountDto): Promise<any> {
     const candidate = await this.accountsService.getAccountByEmail(
       account.email,
     );
@@ -46,7 +46,7 @@ export class AuthService {
     return this.generateToken(accountSafe);
   }
 
-  private async generateToken(account: Account) {
+  private async generateToken(account: CreateAccountDto): Promise<any> {
     const payload = {
       id: account.id,
     };

@@ -17,11 +17,10 @@ const configService = new ConfigService();
     PassportModule,
     JwtModule.register({
       secret: configService.get<string>('SECRET'),
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '1h' },
     }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}
