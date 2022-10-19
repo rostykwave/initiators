@@ -26,10 +26,10 @@ export class Account {
   role: Role;
 
   @Column()
-  firstName: string;
+  firstName?: string;
 
   @Column()
-  lastName: string;
+  lastName?: string;
 
   @Column()
   email: string;
