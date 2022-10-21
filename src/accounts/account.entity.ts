@@ -25,16 +25,16 @@ export class Account {
   })
   role: Role;
 
-  @Column()
-  firstName?: string;
+  @Column({ default: '' })
+  firstName: string;
 
-  @Column()
-  lastName?: string;
+  @Column({ default: '' })
+  lastName: string;
 
   @Column()
   email: string;
 
-  @Column()
+  @Column({ default: '' })
   password: string;
 
   @OneToMany(() => OneTimeBooking, (oneTimeBooking) => oneTimeBooking.owner)

@@ -21,6 +21,14 @@ export class AccountsService {
     return this.accountRepository.save(account);
   }
 
+  async createBasicAccount(
+    createAccountDto: CreateAccountDto,
+  ): Promise<Account> {
+    const account = new Account();
+    account.email = createAccountDto.email;
+    return this.accountRepository.save(account);
+  }
+
   async findAll(): Promise<Account[]> {
     return this.accountRepository.find();
   }
@@ -36,5 +44,17 @@ export class AccountsService {
   async getAccountByEmail(email: string): Promise<Account> {
     const account = await this.accountRepository.findOne({ where: { email } });
     return account;
+  }
+
+  async approve(
+    createAccountDto: CreateAccountDto,
+    hashPassword: string,
+  ): Promise<Account> {
+    const account = await this.getAccountByEmail(createAccountDto.email);
+    account.approved = true;
+    account.firstName = createAccountDto.firstName;
+    account.lastName = createAccountDto.lastName;
+    account.password = hashPassword;
+    return this.accountRepository.save(account);
   }
 }
