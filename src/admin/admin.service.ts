@@ -7,21 +7,9 @@ import { CreateAccountDto } from 'src/accounts/dto/create-account.dto';
 export class AdminService {
   constructor(private readonly accountsService: AccountsService) {}
 
-  async createBasicAccount(
-    createAccountDto: CreateAccountDto,
-  ): Promise<Account> {
+  async createBasicAccounts(emails: string[]): Promise<Account> {
     //TODO send a message via email
 
-    const candidate = await this.accountsService.getAccountByEmail(
-      createAccountDto.email,
-    );
-
-    if (candidate) {
-      throw new HttpException(
-        'Account already invited!',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    return this.accountsService.createBasicAccount(createAccountDto);
+    return this.accountsService.createBasicAccounts(emails);
   }
 }

@@ -7,13 +7,13 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { AdminService } from './admin.service';
 
 @Controller('admin')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('invitation')
   @Roles(Role.ADMIN)
-  create(@Body() createAccountDto: CreateAccountDto): Promise<Account> {
-    return this.adminService.createBasicAccount(createAccountDto);
+  create(@Body() emails: string[]): Promise<Account> {
+    return this.adminService.createBasicAccounts(emails);
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
 import { Account } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 
@@ -21,12 +22,20 @@ export class AccountsService {
     return this.accountRepository.save(account);
   }
 
-  async createBasicAccount(
-    createAccountDto: CreateAccountDto,
-  ): Promise<Account> {
-    const account = new Account();
-    account.email = createAccountDto.email;
-    return this.accountRepository.save(account);
+  async createBasicAccounts(emails: string[]): Promise<any> {
+    emails.forEach((email) => {
+      this.createBasicAccount(email);
+    });
+  }
+
+  async createBasicAccount(email: string): Promise<any> {
+    const candidate = await this.getAccountByEmail(email);
+    if (!candidate) {
+      const accountBasic = new Account();
+      accountBasic.email = email;
+      accountBasic.password = await bcrypt.hash('root', 5);
+      return this.accountRepository.save(accountBasic);
+    }
   }
 
   async findAll(): Promise<Account[]> {
