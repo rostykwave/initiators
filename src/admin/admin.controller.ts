@@ -8,11 +8,11 @@ import { AdminService } from './admin.service';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Post('invitation')
-  @Roles(Role.ADMIN)
   create(@Body() emails: string[]): Promise<Account> {
     return this.adminService.createBasicAccounts(emails);
   }
