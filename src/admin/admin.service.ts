@@ -1,7 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Account } from 'src/accounts/account.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
-import { CreateAccountDto } from 'src/accounts/dto/create-account.dto';
 
 @Injectable()
 export class AdminService {
