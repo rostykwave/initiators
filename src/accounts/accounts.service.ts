@@ -34,11 +34,12 @@ export class AccountsService {
     if (!candidate) {
       const accountBasic = new Account();
       const password: string = generator({ haveNumbers: true });
-      // console.log('Password ', password);
-      //TODO send a message via email
-
       accountBasic.email = email;
       accountBasic.password = await bcrypt.hash(password, 5);
+
+      //TODO send a message via email
+      console.log('Password ', password);
+
       return this.accountRepository.save(accountBasic);
     }
   }
