@@ -25,10 +25,10 @@ export class Account {
   })
   role: Role;
 
-  @Column()
+  @Column({ default: null })
   firstName: string;
 
-  @Column()
+  @Column({ default: null })
   lastName: string;
 
   @Column()

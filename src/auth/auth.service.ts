@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { AccountsService } from 'src/accounts/accounts.service';
@@ -27,24 +32,49 @@ export class AuthService {
     return this.generateToken(account);
   }
 
+  // Rework signUp
   async register(account: CreateAccountDto): Promise<any> {
     const candidate = await this.accountsService.getAccountByEmail(
       account.email,
     );
 
-    if (candidate) {
+    // console.log(candidate);
+
+    if (candidate && candidate.approved) {
       throw new HttpException(
         'Account already exists!',
         HttpStatus.BAD_REQUEST,
       );
     }
-    const hashPassword = await bcrypt.hash(account.password, 5);
-    const accountSafe = await this.accountsService.create({
-      ...account,
-      password: hashPassword,
-    });
-    return this.generateToken(accountSafe);
+    if (candidate) {
+      const hashPassword = await bcrypt.hash(account.password, 5);
+      const accountSafe = await this.accountsService.approve(
+        account,
+        hashPassword,
+      );
+      return this.generateToken(accountSafe);
+    }
+    throw new BadRequestException();
   }
+
+  // async register(account: CreateAccountDto): Promise<any> {
+  //   const candidate = await this.accountsService.getAccountByEmail(
+  //     account.email,
+  //   );
+
+  //   if (candidate) {
+  //     throw new HttpException(
+  //       'Account already exists!',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  //   const hashPassword = await bcrypt.hash(account.password, 5);
+  //   const accountSafe = await this.accountsService.create({
+  //     ...account,
+  //     password: hashPassword,
+  //   });
+  //   return this.generateToken(accountSafe);
+  // }
 
   private async generateToken(account: CreateAccountDto): Promise<any> {
     const payload = {
