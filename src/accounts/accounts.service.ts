@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { generator } from 'ts-password-generator';
 import { Account } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 
@@ -32,8 +33,12 @@ export class AccountsService {
     const candidate = await this.getAccountByEmail(email);
     if (!candidate) {
       const accountBasic = new Account();
+      const password: string = generator({ haveNumbers: true });
+      // console.log('Password ', password);
+      //TODO send a message via email
+
       accountBasic.email = email;
-      accountBasic.password = await bcrypt.hash('root', 5);
+      accountBasic.password = await bcrypt.hash(password, 5);
       return this.accountRepository.save(accountBasic);
     }
   }
