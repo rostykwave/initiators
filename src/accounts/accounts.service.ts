@@ -55,6 +55,8 @@ export class AccountsService {
 
       return this.accountRepository.save(accountBasic);
     }
+
+    console.log(`User with email ${email} already exists`);
   }
 
   async findAll(): Promise<Account[]> {

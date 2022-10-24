@@ -1,6 +1,12 @@
 import { RecurringBooking } from '../recurringBookings/recurringBooking.entity';
 import { Guest } from '../guests/guest.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
 
 export enum Role {
@@ -36,6 +42,9 @@ export class Account {
 
   @Column()
   password: string;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 
   @OneToMany(() => OneTimeBooking, (oneTimeBooking) => oneTimeBooking.owner)
   oneTimeBookings: OneTimeBooking[];
