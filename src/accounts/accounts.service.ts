@@ -47,8 +47,10 @@ export class AccountsService {
         subject: 'Welcome to Incora',
         from: this.configService.get<string>('SEND_GRID_EMAIL'), // Fill it with your validated email on SendGrid account
         text: `We are pleased to invite you to our team. Continue registration with yours email: "${email}" and password: "${password}". Follow link: "https://initiators-ua.herokuapp.com/accounts"`,
-        html: `<div><h1>We are pleased to invite you to our team.</h1><p>Continue registration with yours email: "${email}" and password: "${password}".</p>Follow <a href="https://initiators-ua.herokuapp.com/accounts">link to registration</a></div>`,
+        html: `<div><h1>We are pleased to invite you to our team.</h1><p>Continue registration with yours email: <b>${email}</b> and password: <b>${password}</b>.</p>Follow <a href="https://initiators-ua.herokuapp.com/accounts">link to registration</a></div>`,
       };
+
+      //change "registration link" (ask FrontEnd Team for registration page link)
 
       await this.mailService.send(mail);
       console.log('Password ', password);
