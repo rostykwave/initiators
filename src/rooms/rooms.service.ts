@@ -30,9 +30,20 @@ export class RoomsService {
     return await this.roomRepository.save(room);
   }
 
-  //       async findAll(): Promise<Room[]> {
-  //     return this.roomRepository.find();
-  //   }
+  async findAllByOfficeId(officeId: number): Promise<Room[]> {
+    const office = await this.officeRepository.findOneBy({
+      id: officeId,
+    });
+
+    return this.roomRepository.find({
+      where: {
+        office: office,
+      },
+    });
+  }
+  // async findAll(): Promise<Room[]> {
+  //   return this.roomRepository.find();
+  // }
 
   //   async findOne(id: number): Promise<Room> {
   //     return this.roomRepository.findOneBy({ id });
