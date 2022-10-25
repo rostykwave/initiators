@@ -12,14 +12,15 @@ export class RoomsService {
   ) {}
 
   async create(createRoomDto: CreateRoomDto): Promise<Room> {
-    const Room = new Room();
-    Room.name = createRoomDto.name;
-    Room.floor = createRoomDto.floor;
-    Room.description = createRoomDto.description;
-    Room.maxPeople = createRoomDto.maxPeople;
-    Room.minPeople = createRoomDto.minPeople;
+    const room = new Room();
+    room.name = createRoomDto.name;
+    room.floor = createRoomDto.floor;
+    room.description = createRoomDto.description;
+    room.maxPeople = createRoomDto.maxPeople;
+    room.minPeople = createRoomDto.minPeople;
+    room.office.id = createRoomDto.officeId;
 
-    return this.roomRepository.save(Room);
+    return this.roomRepository.save(room);
   }
 
   //       async findAll(): Promise<Room[]> {
