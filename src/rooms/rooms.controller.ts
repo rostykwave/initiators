@@ -8,9 +8,8 @@ export class RoomsController {
   constructor(private roomsService: RoomsService) {}
 
   @Post()
-  create(@Body() createRoomDto: CreateRoomDto): void {
-    // create(@Body() createRoomDto: CreateRoomDto): Promise<Room> {
-    this.roomsService.create(createRoomDto);
+  create(@Body() createRoomDto: CreateRoomDto): Promise<Room> {
+    return this.roomsService.create(createRoomDto);
   }
 
   //   @Get()

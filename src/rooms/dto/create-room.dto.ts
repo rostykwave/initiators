@@ -5,5 +5,5 @@ export class CreateRoomDto {
   description: string;
   maxPeople: number;
   minPeople: number;
-  officeId: number;
+  officeName: string;
 }
