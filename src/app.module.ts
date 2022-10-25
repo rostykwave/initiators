@@ -12,8 +12,6 @@ import { AppDataSource } from 'ormconfig';
 import { OneTimeBookingsModule } from './oneTimeBookings/oneTimeBookings.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './auth/roles.guard';
 import { MailModule } from './email/email.module';
 
 @Module({
