@@ -11,16 +11,19 @@ export class RoomsService {
     private readonly roomRepository: Repository<Room>,
   ) {}
 
-  async create(createRoomDto: CreateRoomDto): Promise<Room> {
-    const room = new Room();
-    room.name = createRoomDto.name;
-    room.floor = createRoomDto.floor;
-    room.description = createRoomDto.description;
-    room.maxPeople = createRoomDto.maxPeople;
-    room.minPeople = createRoomDto.minPeople;
-    room.office.id = createRoomDto.officeId;
+  // async create(createRoomDto: CreateRoomDto): Promise<Room> {
+  async create(createRoomDto: CreateRoomDto) {
+    // const room = new Room();
+    // room.name = createRoomDto.name;
+    // room.floor = createRoomDto.floor;
+    // room.description = createRoomDto.description;
+    // room.maxPeople = createRoomDto.maxPeople;
+    // room.minPeople = createRoomDto.minPeople;
+    // room.office.id = createRoomDto.officeId;
+    // return this.roomRepository.save(room);
 
-    return this.roomRepository.save(room);
+    const room = this.roomRepository.create(createRoomDto);
+    await this.roomRepository.save(room);
   }
 
   //       async findAll(): Promise<Room[]> {
