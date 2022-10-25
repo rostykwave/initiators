@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Office } from 'src/offices/office.entity';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { Room } from './room.entity';
 
@@ -31,9 +31,9 @@ export class RoomsService {
   }
 
   async findAllByOfficeId(officeId: number): Promise<Room[]> {
-    const office = await this.officeRepository.findOneBy({
-      id: officeId,
-    });
+    // const office = await this.officeRepository.findOneBy({
+    //   id: officeId,
+    // });
 
     return this.roomRepository.find({
       relations: {
@@ -41,7 +41,14 @@ export class RoomsService {
         recurringBookings: true,
       },
       where: {
-        office: office,
+        office: {
+          id: officeId,
+        },
+        oneTimeBookings: {
+          meetingDate: Raw((alias) => `${alias} > :date`, {
+            date: '2022-10-26',
+          }),
+        },
       },
     });
   }
