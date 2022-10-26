@@ -49,6 +49,9 @@ export class RoomsService {
           },
           //{} What else to write to define an empty [] of oneTimeBookings
         ],
+        recurringBookings: {
+          startDate: Between(new Date(dateFrom), new Date(dateTo)),
+        },
       },
       order: {
         id: 'ASC',
