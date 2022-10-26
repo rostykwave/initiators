@@ -12,12 +12,11 @@ import { AppDataSource } from 'ormconfig';
 import { OneTimeBookingsModule } from './oneTimeBookings/oneTimeBookings.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './auth/roles.guard';
+import { MailModule } from './email/email.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(AppDataSource.options),
     AccountsModule,
     OneTimeBookingsModule,
@@ -27,6 +26,7 @@ import { RolesGuard } from './auth/roles.guard';
     OfficesModule,
     AuthModule,
     AdminModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

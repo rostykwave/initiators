@@ -5,12 +5,14 @@ import * as bcrypt from 'bcryptjs';
 import { generator } from 'ts-password-generator';
 import { Account } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AccountsService {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
+    private readonly emailService: EmailService,
   ) {}
 
   async create(createAccountDto: CreateAccountDto): Promise<Account> {
@@ -36,10 +38,7 @@ export class AccountsService {
       const password: string = generator({ haveNumbers: true });
       accountBasic.email = email;
       accountBasic.password = await bcrypt.hash(password, 5);
-
-      //TODO send a message via email
-      console.log('Password ', password);
-
+      await this.emailService.sendInvitationEmail(email, password);
       return this.accountRepository.save(accountBasic);
     }
   }
