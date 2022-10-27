@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 
 @Injectable()
 export class QueryParseIntPipe implements PipeTransform {
-  transform({ officeId }) {
+  transform({ officeId, soonestBookingsDays }) {
     const officeIdNum = officeId ? Number.parseInt(officeId) : undefined;
 
     if (Number.isNaN(officeIdNum)) {
@@ -13,6 +13,7 @@ export class QueryParseIntPipe implements PipeTransform {
 
     return {
       officeId: officeIdNum,
+      soonestBookingsDays,
     };
   }
 }

@@ -1,3 +1,7 @@
+import { Room } from '../room.entity';
+
 export class FindAllByOfficeIdDto {
-  officeId?: number;
+  data: {
+    rooms: Room[];
+  };
 }
