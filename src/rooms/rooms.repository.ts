@@ -2,6 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Room } from './room.entity';
 import { IRoomRepository } from './rooms.repository.interface';
 import { Injectable } from '@nestjs/common';
+import { addDaysToDate } from './helpers/addDaysToDate';
 
 @Injectable()
 export class RoomRepository
@@ -13,20 +14,19 @@ export class RoomRepository
   }
 
   findAllRooms(officeId, soonestBookingsDays) {
-    console.log('soonestBookingsDays', soonestBookingsDays);
-    return this.find({
-      relations: {
-        oneTimeBookings: true,
-        recurringBookings: true,
-      },
-      where: {
-        office: {
-          id: officeId,
-        },
-      },
-      order: {
-        id: 'ASC',
-      },
-    });
+    const today = new Date();
+    console.log('today', today);
+    const endDateQuery = addDaysToDate(new Date(), soonestBookingsDays);
+    console.log('endDateQuery', endDateQuery);
+
+    return this.createQueryBuilder('rooms')
+      .leftJoinAndSelect(
+        'rooms.oneTimeBookings',
+        'oneTimeBooking',
+        `oneTimeBooking.meetingDate BETWEEN '${today.toISOString()}' AND '${endDateQuery.toISOString()}'`,
+      )
+      .where('rooms.office.id = :officeId', { officeId })
+
+      .getMany();
   }
 }

@@ -11,9 +11,19 @@ export class QueryParseIntPipe implements PipeTransform {
       );
     }
 
+    const soonestBookingsDaysNum = soonestBookingsDays
+      ? Number.parseInt(soonestBookingsDays)
+      : undefined;
+
+    if (Number.isNaN(soonestBookingsDaysNum)) {
+      throw new BadRequestException(
+        'Request a valid "soonestBookingsDaysNum" query parameter, type "number"',
+      );
+    }
+
     return {
       officeId: officeIdNum,
-      soonestBookingsDays,
+      soonestBookingsDays: soonestBookingsDaysNum,
     };
   }
 }

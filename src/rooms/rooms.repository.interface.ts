@@ -1,5 +1,5 @@
 import { Room } from './room.entity';
 
 export interface IRoomRepository {
-  findAllRooms(officeId: number, soonestBookingsDays: string): Promise<Room[]>;
+  findAllRooms(officeId: number, soonestBookingsDays: number): Promise<Room[]>;
 }

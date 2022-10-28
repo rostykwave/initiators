@@ -13,7 +13,7 @@ export class RoomsController {
   async findAllByOfficeId(
     @Query(QueryParseIntPipe) { officeId, soonestBookingsDays }: roomsQueryDto,
   ): Promise<FindAllByOfficeIdDto> {
-    const allRooms = await this.roomsService.findAllRoomsWithBookings(
+    const allRooms = await this.roomsService.findAllRooms(
       officeId,
       soonestBookingsDays,
     );
