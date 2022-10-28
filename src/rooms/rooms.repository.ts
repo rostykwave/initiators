@@ -3,6 +3,7 @@ import { Room } from './room.entity';
 import { IRoomRepository } from './rooms.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { addDaysToDate } from './helpers/addDaysToDate';
+import { reccurringBookingToArrayOfSimpleBookings } from './helpers/reccurringBookingToArrayOfSimpleBookings';
 
 @Injectable()
 export class RoomRepository
@@ -13,11 +14,11 @@ export class RoomRepository
     super(Room, dataSource.createEntityManager());
   }
 
-  findAllRooms(officeId, soonestBookingsDays) {
+  async findAllRooms(officeId, soonestBookingsDays) {
     const today = new Date();
     const endDateQuery = addDaysToDate(new Date(), soonestBookingsDays);
 
-    return this.createQueryBuilder('rooms')
+    const allRooms = await this.createQueryBuilder('rooms')
       .leftJoinAndSelect(
         'rooms.oneTimeBookings',
         'oneTimeBooking',
@@ -32,5 +33,16 @@ export class RoomRepository
       .where('rooms.office.id = :officeId', { officeId })
 
       .getMany();
+
+    allRooms.map((room) => {
+      // console.log('rooom', room.recurringBookings);
+      room.recurringBookings.map((booking) => {
+        const result = reccurringBookingToArrayOfSimpleBookings(booking);
+        return result;
+      });
+    });
+
+    ///return
+    return allRooms;
   }
 }
