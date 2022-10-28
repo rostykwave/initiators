@@ -1,4 +1,11 @@
-export const reccurringBookingToArrayOfSimpleBookings = (recurringBooking) => {
+import { addDaysToDate } from './addDaysToDate';
+
+export const reccurringBookingToArrayOfSimpleBookings = (
+  recurringBooking,
+  soonestBookingsDays,
+) => {
+  const today = new Date(new Date().toJSON().slice(0, 10));
+  const endDateQuery = addDaysToDate(new Date(), soonestBookingsDays);
   const startDate = new Date(recurringBooking.startDate);
   const endDate = new Date(recurringBooking.endDate);
   const Difference_In_Time = endDate.getTime() - startDate.getTime();
@@ -14,20 +21,23 @@ export const reccurringBookingToArrayOfSimpleBookings = (recurringBooking) => {
     );
     const nextDayOfWeek = nextDate.getDay();
 
-    if (recurringDaysOfWeek.includes(nextDayOfWeek)) {
+    if (
+      recurringDaysOfWeek.includes(nextDayOfWeek) &&
+      nextDate.getTime() >= today.getTime() &&
+      nextDate.getTime() <= endDateQuery.getTime()
+    ) {
       const booking = {
-        // id: 3,
+        id: `recurrent ${recurringBooking.id}`,
+        // type: 'recurrent',
         createdAt: recurringBooking.createdAt,
-        meetingDate: nextDate,
+        meetingDate: nextDate.toJSON().slice(0, 10),
         startTime: '08:00:00',
         endTime: '09:00:00',
       };
-      // simpleBookings.push(nextDate);
       simpleBookings.push(booking);
     }
   }
-
-  console.log('simpleBookings', simpleBookings);
+  return simpleBookings;
 };
 
 //additional helper func

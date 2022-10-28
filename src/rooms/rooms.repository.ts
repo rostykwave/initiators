@@ -3,7 +3,6 @@ import { Room } from './room.entity';
 import { IRoomRepository } from './rooms.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { addDaysToDate } from './helpers/addDaysToDate';
-import { reccurringBookingToArrayOfSimpleBookings } from './helpers/reccurringBookingToArrayOfSimpleBookings';
 
 @Injectable()
 export class RoomRepository
@@ -34,15 +33,6 @@ export class RoomRepository
 
       .getMany();
 
-    allRooms.map((room) => {
-      // console.log('rooom', room.recurringBookings);
-      room.recurringBookings.map((booking) => {
-        const result = reccurringBookingToArrayOfSimpleBookings(booking);
-        return result;
-      });
-    });
-
-    ///return
     return allRooms;
   }
 }
