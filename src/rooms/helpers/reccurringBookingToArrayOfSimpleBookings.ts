@@ -27,8 +27,7 @@ export const reccurringBookingToArrayOfSimpleBookings = (
       nextDate.getTime() <= endDateQuery.getTime()
     ) {
       const booking = {
-        id: `recurrent ${recurringBooking.id}`,
-        // type: 'recurrent',
+        id: `recurrent id:${recurringBooking.id}`,
         createdAt: recurringBooking.createdAt,
         meetingDate: nextDate.toJSON().slice(0, 10),
         startTime: '08:00:00',
