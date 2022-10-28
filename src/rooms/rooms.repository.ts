@@ -15,9 +15,7 @@ export class RoomRepository
 
   findAllRooms(officeId, soonestBookingsDays) {
     const today = new Date();
-    console.log('today', today);
     const endDateQuery = addDaysToDate(new Date(), soonestBookingsDays);
-    console.log('endDateQuery', endDateQuery);
 
     return this.createQueryBuilder('rooms')
       .leftJoinAndSelect(

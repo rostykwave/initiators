@@ -9,6 +9,16 @@ import {
 } from 'typeorm';
 import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
 
+export enum Devices {
+  WhiteBoard = 'White board',
+  BigScreen = 'Big screen',
+  WaterCooler = 'Water cooler',
+  PlayStation = 'PlayStation',
+  AirConditioner = 'Air conditioner',
+  SoundSystem = 'Sound system',
+  TennisTable = 'Tennis table',
+}
+
 @Entity()
 export class Room {
   @PrimaryGeneratedColumn()
@@ -20,8 +30,13 @@ export class Room {
   @Column()
   floor: number;
 
-  @Column()
-  description: string;
+  @Column({
+    type: 'enum',
+    enum: Devices,
+    array: true,
+    nullable: true,
+  })
+  devices: Devices[];
 
   @Column()
   maxPeople: number;

@@ -28,10 +28,10 @@ export class RecurringBooking {
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'date' })
   startDate: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'date' })
   endDate: Date;
 
   @Column({ type: 'time' })
