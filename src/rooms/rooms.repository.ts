@@ -23,6 +23,12 @@ export class RoomRepository
         'oneTimeBooking',
         `oneTimeBooking.meetingDate BETWEEN '${today.toISOString()}' AND '${endDateQuery.toISOString()}'`,
       )
+      .leftJoinAndSelect(
+        'rooms.recurringBookings',
+        'recurringBookings',
+        'recurringBookings.endDate >= :start_at',
+        { start_at: today },
+      )
       .where('rooms.office.id = :officeId', { officeId })
 
       .getMany();
