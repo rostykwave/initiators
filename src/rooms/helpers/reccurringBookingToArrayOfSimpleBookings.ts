@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { addDaysToDate } from './addDaysToDate';
 
 export const reccurringBookingToArrayOfSimpleBookings = (
@@ -27,7 +28,7 @@ export const reccurringBookingToArrayOfSimpleBookings = (
       nextDate.getTime() <= endDateQuery.getTime()
     ) {
       const booking = {
-        id: `recurrent id:${recurringBooking.id}`,
+        id: `recurrent ${uuidv4()}}`,
         createdAt: recurringBooking.createdAt,
         meetingDate: nextDate.toJSON().slice(0, 10),
         startTime: '08:00:00',
