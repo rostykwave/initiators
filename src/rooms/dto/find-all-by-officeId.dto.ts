@@ -1,21 +1,19 @@
-import { Devices } from '../room.entity';
+// import {
+//   validate,
+//   validateOrReject,
+//   Contains,
+//   IsInt,
+//   Length,
+//   IsEmail,
+//   IsFQDN,
+//   IsDate,
+//   Min,
+//   Max,
+// } from 'class-validator';
+import { IAllRoomsUpdated } from '../interfaces/allRoomsUpdated.interface';
 
 export class FindAllByOfficeIdDto {
   data: {
-    rooms: {
-      id: number;
-      name: string;
-      floor: number;
-      devices: Devices[];
-      maxPeople: number;
-      minPeople: number;
-      soonestBookings: {
-        id: number | string;
-        createdAt: string;
-        meetingDate: string;
-        startTime: string;
-        endTime: string;
-      }[];
-    }[];
+    rooms: IAllRoomsUpdated[];
   };
 }
