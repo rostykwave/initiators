@@ -14,24 +14,27 @@ export class RoomRepository
     super(Room, dataSource.createEntityManager());
   }
 
-  async findAllRooms(officeId, soonestBookingsDays) {
-    const todaysLocaleDate = todaysLocaleDateString();
-    const queryEndDate = addDaysToDate(
-      new Date(todaysLocaleDate),
+  async findAllRooms(officeId: number, soonestBookingsDays: number) {
+    const fromDateString = todaysLocaleDateString();
+    const toDateString = addDaysToDate(
+      new Date(fromDateString),
       soonestBookingsDays,
-    );
+    )
+      .toJSON()
+      .split('T')[0];
 
     const allRooms = await this.createQueryBuilder('rooms')
       .leftJoinAndSelect(
         'rooms.oneTimeBookings',
         'oneTimeBooking',
-        `oneTimeBooking.meetingDate BETWEEN '${todaysLocaleDate}' AND '${queryEndDate.toISOString()}'`,
+        'oneTimeBooking.meetingDate BETWEEN :from AND :to',
+        { from: fromDateString, to: toDateString },
       )
       .leftJoinAndSelect(
         'rooms.recurringBookings',
         'recurringBookings',
         'recurringBookings.endDate >= :start_at',
-        { start_at: todaysLocaleDate },
+        { start_at: fromDateString },
       )
       .where('rooms.office.id = :officeId', { officeId })
       .getMany();
