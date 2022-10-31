@@ -3,6 +3,7 @@ import { Room } from './room.entity';
 import { IRoomRepository } from './rooms.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { addDaysToDate } from './helpers/addDaysToDate';
+import { todaysLocaleDateString } from './helpers/todaysLocaleDateString';
 
 @Injectable()
 export class RoomRepository
@@ -14,23 +15,27 @@ export class RoomRepository
   }
 
   async findAllRooms(officeId, soonestBookingsDays) {
-    const todaysDateString = new Date().toJSON().slice(0, 10);
+    const todaysLocaleDate = todaysLocaleDateString();
+    console.log('todaysLocaleDate', todaysLocaleDate);
+    // const todaysDateString = new Date().toJSON().slice(0, 10);
     // const todaysDateString = new Date().toLocaleString().slice(0, 10);
-    console.log('todaysDateString', todaysDateString);
-    const queryEndDate = addDaysToDate(new Date(), soonestBookingsDays);
+    const queryEndDate = addDaysToDate(
+      new Date(todaysLocaleDate),
+      soonestBookingsDays,
+    );
     console.log('queryEndDate', queryEndDate);
 
     const allRooms = await this.createQueryBuilder('rooms')
       .leftJoinAndSelect(
         'rooms.oneTimeBookings',
         'oneTimeBooking',
-        `oneTimeBooking.meetingDate BETWEEN '${todaysDateString}' AND '${queryEndDate.toISOString()}'`,
+        `oneTimeBooking.meetingDate BETWEEN '${todaysLocaleDate}' AND '${queryEndDate.toISOString()}'`,
       )
       .leftJoinAndSelect(
         'rooms.recurringBookings',
         'recurringBookings',
         'recurringBookings.endDate >= :start_at',
-        { start_at: todaysDateString },
+        { start_at: todaysLocaleDate },
       )
       .where('rooms.office.id = :officeId', { officeId })
 

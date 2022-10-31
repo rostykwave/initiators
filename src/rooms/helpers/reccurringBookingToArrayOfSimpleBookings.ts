@@ -1,38 +1,41 @@
+import { RecurringBooking } from 'src/recurringBookings/recurringBooking.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { addDaysToDate } from './addDaysToDate';
+import { todaysLocaleDateString } from './todaysLocaleDateString';
 
 export const reccurringBookingToArrayOfSimpleBookings = (
-  recurringBooking,
-  soonestBookingsDays,
+  recurringBooking: RecurringBooking,
+  soonestBookingsDays: number,
 ) => {
-  const today = new Date(new Date().toJSON().slice(0, 10));
-  const endDateQuery = addDaysToDate(new Date(), soonestBookingsDays);
+  const today = new Date(todaysLocaleDateString());
+  const endOfPeriodDate = addDaysToDate(new Date(), soonestBookingsDays);
+
   const startDate = new Date(recurringBooking.startDate);
   const endDate = new Date(recurringBooking.endDate);
-  const Difference_In_Time = endDate.getTime() - startDate.getTime();
-  const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+  const daysBetweenStartAndEndDate =
+    (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
+
   const simpleBookings = [];
   const recurringDaysOfWeek = daysArrayNameToNumberOfWeek(
     recurringBooking.daysOfWeek,
   );
 
-  for (let i = 0; i < Difference_In_Days; i++) {
-    const nextDate = new Date(
-      new Date(startDate).setDate(startDate.getDate() + i),
-    );
+  for (let i = 0; i < daysBetweenStartAndEndDate; i++) {
+    const nextDate = addDaysToDate(startDate, i);
     const nextDayOfWeek = nextDate.getDay();
 
     if (
       recurringDaysOfWeek.includes(nextDayOfWeek) &&
       nextDate.getTime() >= today.getTime() &&
-      nextDate.getTime() <= endDateQuery.getTime()
+      nextDate.getTime() <= endOfPeriodDate.getTime()
     ) {
       const booking = {
-        id: `recurrent ${uuidv4()}}`,
+        id: uuidv4(),
+        generatedFromRecurrentBookingWithId: recurringBooking.id,
         createdAt: recurringBooking.createdAt,
-        meetingDate: nextDate.toJSON().slice(0, 10),
-        startTime: '08:00:00',
-        endTime: '09:00:00',
+        meetingDate: nextDate.toJSON().split('T')[0],
+        startTime: recurringBooking.startTime,
+        endTime: recurringBooking.endTime,
       };
       simpleBookings.push(booking);
     }
