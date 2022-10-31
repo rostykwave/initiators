@@ -14,9 +14,11 @@ export class RoomRepository
   }
 
   async findAllRooms(officeId, soonestBookingsDays) {
-    // const todaysDateString = new Date().toJSON().slice(0, 10);
-    const todaysDateString = new Date().toLocaleString().slice(0, 10);
+    const todaysDateString = new Date().toJSON().slice(0, 10);
+    // const todaysDateString = new Date().toLocaleString().slice(0, 10);
+    console.log('todaysDateString', todaysDateString);
     const queryEndDate = addDaysToDate(new Date(), soonestBookingsDays);
+    console.log('queryEndDate', queryEndDate);
 
     const allRooms = await this.createQueryBuilder('rooms')
       .leftJoinAndSelect(
