@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { reccurringBookingToArrayOfSimpleBookings } from './helpers/reccurringBookingToArrayOfSimpleBookings';
-import { IAllRoomsUpdated } from './interfaces/allRoomsUpdated.interface';
+import { reccurringBookingParsing } from './helpers/reccurring-booking-parsing';
+import { IAllRoomsUpdated } from './interfaces/all-rooms-updated.interface';
 import { RoomRepository } from './rooms.repository';
 
 @Injectable()
@@ -19,10 +19,7 @@ export class RoomsService {
     const allRoomsUpdated = allRooms.map((room) => {
       const soonestRecurringBookings = room.recurringBookings.flatMap(
         (booking) => {
-          return reccurringBookingToArrayOfSimpleBookings(
-            booking,
-            soonestBookingsDays,
-          );
+          return reccurringBookingParsing(booking, soonestBookingsDays);
         },
       );
 

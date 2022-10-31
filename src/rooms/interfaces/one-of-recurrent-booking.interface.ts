@@ -1,4 +1,4 @@
-export interface IRecurrentBooking {
+export interface IOneOfRecurrentBooking {
   id: string;
   generatedFromRecurrentBookingWithId: number;
   createdAt: Date;

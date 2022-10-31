@@ -1,8 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { FindAllByOfficeIdDto } from './dto/find-all-by-officeId.dto';
+import { IFindAllByOfficeId } from './interfaces/find-all-by-officeId.interface';
 import { RoomsService } from './rooms.service';
-import { QueryParseIntPipe } from './pipes/queryParseInt.pipe';
-import { roomsQueryDto } from './dto/rooms-query.dto';
+import { roomsOnSoonestBookingsDaysDto } from './dto/rooms-on-soonest-bookings-days.dto';
 
 @Controller('rooms')
 export class RoomsController {
@@ -10,8 +9,9 @@ export class RoomsController {
 
   @Get()
   async findAllByOfficeId(
-    @Query(QueryParseIntPipe) { officeId, soonestBookingsDays }: roomsQueryDto,
-  ): Promise<FindAllByOfficeIdDto> {
+    @Query()
+    { officeId, soonestBookingsDays }: roomsOnSoonestBookingsDaysDto,
+  ): Promise<IFindAllByOfficeId> {
     const allRoomsUpdated = await this.roomsService.findAllRooms(
       officeId,
       soonestBookingsDays,

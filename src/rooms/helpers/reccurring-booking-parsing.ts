@@ -1,9 +1,9 @@
 import { RecurringBooking } from 'src/recurringBookings/recurringBooking.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { addDaysToDate } from './addDaysToDate';
-import { todaysLocaleDateString } from './todaysLocaleDateString';
+import { addDaysToDate } from './add-days-to-date';
+import { todaysLocaleDateString } from './todays-locale-date-string';
 
-export const reccurringBookingToArrayOfSimpleBookings = (
+export const reccurringBookingParsing = (
   recurringBooking: RecurringBooking,
   soonestBookingsDays: number,
 ) => {
@@ -15,8 +15,8 @@ export const reccurringBookingToArrayOfSimpleBookings = (
   const daysBetweenStartAndEndDate =
     (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
 
-  const simpleBookings = [];
-  const recurringDaysOfWeek = daysArrayNameToNumberOfWeek(
+  const parsedBookings = [];
+  const arrayOfrecurringDaysOfWeek = arrayOfNumbersToArrayOfWeekDays(
     recurringBooking.daysOfWeek,
   );
 
@@ -25,7 +25,7 @@ export const reccurringBookingToArrayOfSimpleBookings = (
     const nextDayOfWeek = nextDate.getDay();
 
     if (
-      recurringDaysOfWeek.includes(nextDayOfWeek) &&
+      arrayOfrecurringDaysOfWeek.includes(nextDayOfWeek) &&
       nextDate.getTime() >= today.getTime() &&
       nextDate.getTime() <= endOfPeriodDate.getTime()
     ) {
@@ -37,14 +37,14 @@ export const reccurringBookingToArrayOfSimpleBookings = (
         startTime: recurringBooking.startTime,
         endTime: recurringBooking.endTime,
       };
-      simpleBookings.push(booking);
+      parsedBookings.push(booking);
     }
   }
-  return simpleBookings;
+  return parsedBookings;
 };
 
 //additional helper func
-function daysArrayNameToNumberOfWeek(recurringDaysOfWeek) {
+function arrayOfNumbersToArrayOfWeekDays(recurringDaysOfWeek) {
   const result = recurringDaysOfWeek.map((day) => {
     switch (day) {
       case 'Monday':
