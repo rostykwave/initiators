@@ -18,7 +18,7 @@ export class OneTimeBooking {
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'date' })
   meetingDate: Date;
 
   @Column({ type: 'time' })

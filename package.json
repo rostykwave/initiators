@@ -35,6 +35,8 @@
     "@nestjs/typeorm": "^9.0.1",
     "@sendgrid/mail": "^7.7.0",
     "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
     "cross-var": "^1.1.0",
     "handlebars": "^4.7.7",
     "nodemailer": "^6.8.0",
@@ -46,7 +48,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "ts-password-generator": "^1.0.6",
-    "typeorm": "^0.3.10"
+    "typeorm": "^0.3.10",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
