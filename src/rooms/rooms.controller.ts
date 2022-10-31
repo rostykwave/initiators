@@ -3,7 +3,6 @@ import { FindAllByOfficeIdDto } from './dto/find-all-by-officeId.dto';
 import { RoomsService } from './rooms.service';
 import { QueryParseIntPipe } from './pipes/queryParseInt.pipe';
 import { roomsQueryDto } from './dto/rooms-query.dto';
-import { reccurringBookingToArrayOfSimpleBookings } from './helpers/reccurringBookingToArrayOfSimpleBookings';
 
 @Controller('rooms')
 export class RoomsController {
