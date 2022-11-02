@@ -20,7 +20,7 @@ export class RoomRepository
       new Date(fromDateString),
       soonestBookingsDays,
     )
-      .toJSON()
+      .toISOString()
       .split('T')[0];
 
     const allRooms = await this.createQueryBuilder('rooms')
