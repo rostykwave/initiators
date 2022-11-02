@@ -1,7 +1,7 @@
 import { addDaysToDate } from 'src/helpers/add-days-to-date';
 import { parseDateStringWithoutTime } from 'src/helpers/parse-date-string-without-time';
 
-export const filterBySoonestBookingsDays = (
+export const filterReccurringBookingsBySoonestBookingsDays = (
   allreccurringBookings,
   soonestBookingsDays: number,
 ) => {
