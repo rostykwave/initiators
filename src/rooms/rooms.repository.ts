@@ -37,6 +37,7 @@ export class RoomRepository
         { start_at: fromDateString },
       )
       .where('rooms.office.id = :officeId', { officeId })
+      .orderBy('rooms.id', 'ASC')
       .getMany();
 
     return allRooms;
