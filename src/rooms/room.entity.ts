@@ -9,16 +9,16 @@ import {
 } from 'typeorm';
 import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
 
-export type Devices = {
-  WhiteBoard: boolean;
-  BigScreen: boolean;
-  WaterCooler: boolean;
-  PlayStation: boolean;
-  AirConditioner: boolean;
-  SoundSystem: boolean;
-  TennisTable: boolean;
-  Camera: boolean;
-};
+export enum Devices {
+  WhiteBoard = 'White board',
+  BigScreen = 'Big screen',
+  WaterCooler = 'Water cooler',
+  PlayStation = 'PlayStation',
+  AirConditioner = 'Air conditioner',
+  SoundSystem = 'Sound system',
+  TennisTable = 'Tennis table',
+  Camera = 'Camera',
+}
 
 @Entity()
 export class Room {
@@ -31,8 +31,13 @@ export class Room {
   @Column()
   floor: number;
 
-  @Column()
-  devices: Devices;
+  @Column({
+    type: 'enum',
+    enum: Devices,
+    array: true,
+    nullable: true,
+  })
+  devices: Devices[];
 
   @Column()
   maxPeople: number;
