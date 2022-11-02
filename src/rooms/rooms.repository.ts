@@ -3,7 +3,7 @@ import { Room } from './room.entity';
 import { IRoomRepository } from './interfaces/rooms.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { addDaysToDate } from '../helpers/add-days-to-date';
-import { todaysLocaleDateString } from '../helpers/todays-locale-date-string';
+import { parseDateStringWithoutTime } from '../helpers/parse-date-string-without-time';
 
 @Injectable()
 export class RoomRepository
@@ -15,13 +15,11 @@ export class RoomRepository
   }
 
   async findAllRooms(officeId: number, soonestBookingsDays: number) {
-    const fromDateString = todaysLocaleDateString();
-    const toDateString = addDaysToDate(
-      new Date(fromDateString),
-      soonestBookingsDays,
-    )
-      .toISOString()
-      .split('T')[0];
+    const fromDateString = parseDateStringWithoutTime(new Date());
+
+    const toDateString = parseDateStringWithoutTime(
+      addDaysToDate(new Date(fromDateString), soonestBookingsDays),
+    );
 
     const allRooms = await this.createQueryBuilder('rooms')
       .leftJoinAndSelect(

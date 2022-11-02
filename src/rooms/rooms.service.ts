@@ -26,8 +26,6 @@ export class RoomsService {
             allreccurringBookings,
             soonestBookingsDays,
           );
-          // return reccurringBookingsTillSoonestBookingsDays;
-          // return reccurringBookingParsing(booking, soonestBookingsDays);
         },
       );
 
