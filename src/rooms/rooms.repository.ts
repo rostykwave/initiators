@@ -2,8 +2,8 @@ import { DataSource, Repository } from 'typeorm';
 import { Room } from './room.entity';
 import { IRoomRepository } from './interfaces/rooms.repository.interface';
 import { Injectable } from '@nestjs/common';
-import { addDaysToDate } from './helpers/add-days-to-date';
-import { todaysLocaleDateString } from './helpers/todays-locale-date-string';
+import { addDaysToDate } from '../helpers/add-days-to-date';
+import { todaysLocaleDateString } from '../helpers/todays-locale-date-string';
 
 @Injectable()
 export class RoomRepository

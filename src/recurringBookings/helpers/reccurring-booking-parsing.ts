@@ -1,7 +1,7 @@
 import { RecurringBooking } from 'src/recurringBookings/recurringBooking.entity';
 // import { v4 as uuidv4 } from 'uuid';
-import { addDaysToDate } from '../../rooms/helpers/add-days-to-date';
-import { todaysLocaleDateString } from '../../rooms/helpers/todays-locale-date-string';
+import { addDaysToDate } from '../../helpers/add-days-to-date';
+import { todaysLocaleDateString } from '../../helpers/todays-locale-date-string';
 
 export const reccurringBookingParsing = (
   recurringBooking: RecurringBooking,
