@@ -1,6 +1,6 @@
 export interface IOneOfRecurrentBooking {
-  id: string;
-  generatedFromRecurrentBookingWithId: number;
+  id: number;
+  isRecurring: boolean;
   createdAt: Date;
   meetingDate: Date;
   startTime: Date;

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { reccurringBookingParsing } from './helpers/reccurring-booking-parsing';
+import { reccurringBookingParsing } from '../recurringBookings/helpers/reccurring-booking-parsing';
 import { IAllRoomsUpdated } from './interfaces/all-rooms-updated.interface';
 import { RoomRepository } from './rooms.repository';
 
@@ -19,7 +19,15 @@ export class RoomsService {
     const allRoomsUpdated = allRooms.map((room) => {
       const soonestRecurringBookings = room.recurringBookings.flatMap(
         (booking) => {
-          return reccurringBookingParsing(booking, soonestBookingsDays);
+          const allreccurringBooking = reccurringBookingParsing(booking);
+          const reccurringBookingsTillSoonestBookingsDays =
+            allreccurringBooking.filter(
+              (rb) =>
+                new Date(rb.meetingDate).getTime() <=
+                new Date('2022-11-02').getTime(),
+            );
+          return reccurringBookingsTillSoonestBookingsDays;
+          // return reccurringBookingParsing(booking, soonestBookingsDays);
         },
       );
 
