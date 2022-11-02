@@ -17,6 +17,7 @@ export enum Devices {
   AirConditioner = 'Air conditioner',
   SoundSystem = 'Sound system',
   TennisTable = 'Tennis table',
+  Camera = 'Camera',
 }
 
 @Entity()
