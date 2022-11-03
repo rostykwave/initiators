@@ -11,7 +11,10 @@ export class OneTimeBookingsService {
     private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
   ) {}
 
-  async create(createOneTimeDto: CreateOneTimeDto): Promise<OneTimeBooking> {
+  async create(
+    createOneTimeDto: CreateOneTimeDto,
+    currentUserId: number,
+  ): Promise<OneTimeBooking> {
     const oneTimeBooking = new OneTimeBooking();
     oneTimeBooking.createdAt = createOneTimeDto.createdAt;
     oneTimeBooking.meetingDate = createOneTimeDto.meetingDate;
@@ -19,7 +22,8 @@ export class OneTimeBookingsService {
     oneTimeBooking.endTime = createOneTimeDto.endTime;
 
     const account = new Account();
-    account.id = createOneTimeDto.ownerId;
+    account.id = currentUserId;
+    // account.id = createOneTimeDto.ownerId;
     oneTimeBooking.owner = account;
 
     const room = new Room();
