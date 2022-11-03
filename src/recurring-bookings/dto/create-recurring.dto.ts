@@ -1,4 +1,11 @@
-import { IsInt, Min, Max, IsDateString, Matches } from 'class-validator';
+import {
+  IsInt,
+  Min,
+  Max,
+  IsDateString,
+  Matches,
+  IsEnum,
+} from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
 
 export class CreateRecurringDto {
@@ -19,6 +26,7 @@ export class CreateRecurringDto {
   @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
   endTime: Date;
 
+  @IsEnum(DaysOfWeek, { each: true })
   daysOfWeek: DaysOfWeek[];
 
   @Min(1)
