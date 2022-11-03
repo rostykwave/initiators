@@ -1,4 +1,4 @@
-import { RecurringBooking } from '../recurringBookings/recurringBooking.entity';
+import { RecurringBooking } from '../recurring-bookings/recurring-booking.entity';
 import { Guest } from '../guests/guest.entity';
 import {
   Entity,
@@ -7,7 +7,7 @@ import {
   OneToMany,
   CreateDateColumn,
 } from 'typeorm';
-import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
+import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 
 export enum Role {
   USER = 'User',

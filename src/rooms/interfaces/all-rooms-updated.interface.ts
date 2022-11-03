@@ -1,4 +1,4 @@
-import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
+import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { Devices } from '../room.entity';
 import { IOneOfRecurrentBooking } from './one-of-recurrent-booking.interface';
 
