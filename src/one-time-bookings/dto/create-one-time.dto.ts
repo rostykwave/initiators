@@ -1,8 +1,9 @@
-import { IsInt, Min, Max, IsDateString } from 'class-validator';
+import { IsInt, Min, Max, IsDateString, IsDate } from 'class-validator';
 
 export class CreateOneTimeDto {
   id?: number;
 
+  // @IsDate()
   createdAt: Date;
 
   @IsDateString()

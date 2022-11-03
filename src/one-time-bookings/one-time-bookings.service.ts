@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Account } from 'src/accounts/account.entity';
+import { Room } from 'src/rooms/room.entity';
 import { CreateOneTimeDto } from './dto/create-one-time.dto';
 import { OneTimeBooking } from './one-time-booking.entity';
 import { OneTimeBookingsRepository } from './one-time-bookings.repository';
@@ -16,8 +18,13 @@ export class OneTimeBookingsService {
     oneTimeBooking.startTime = createOneTimeDto.startTime;
     oneTimeBooking.endTime = createOneTimeDto.endTime;
 
-    // oneTimeBooking.ownerId = createOneTimeDto.ownerId;
-    // oneTimeBooking.roomId = createOneTimeDto.roomId;
+    const account = new Account();
+    account.id = createOneTimeDto.ownerId;
+    oneTimeBooking.owner = account;
+
+    const room = new Room();
+    room.id = createOneTimeDto.roomId;
+    oneTimeBooking.room = room;
 
     return this.oneTimeBookingsRepository.save(oneTimeBooking);
   }
