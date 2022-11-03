@@ -8,9 +8,7 @@ export class OneTimeBookingsController {
   constructor(private oneTimeBookingsService: OneTimeBookingsService) {}
 
   @Post()
-  // create(@Body() createOneTimeDto: CreateOneTimeDto): void {
   create(@Body() createOneTimeDto: CreateOneTimeDto): Promise<OneTimeBooking> {
-    // console.log('createOneTimeDto', createOneTimeDto);
     return this.oneTimeBookingsService.create(createOneTimeDto);
   }
 }
