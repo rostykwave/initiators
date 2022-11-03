@@ -23,7 +23,6 @@ export class OneTimeBookingsService {
 
     const account = new Account();
     account.id = currentUserId;
-    // account.id = createOneTimeDto.ownerId;
     oneTimeBooking.owner = account;
 
     const room = new Room();

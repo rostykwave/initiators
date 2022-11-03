@@ -20,9 +20,6 @@ export class CreateRecurringDto {
 
   daysOfWeek: DaysOfWeek[];
 
-  @IsInt()
-  ownerId: number;
-
   @Min(1)
   @Max(8)
   @IsInt()

@@ -13,9 +13,6 @@ export class CreateOneTimeDto {
 
   endTime: Date;
 
-  @IsInt()
-  ownerId: number;
-
   @Min(1)
   @Max(8)
   @IsInt()

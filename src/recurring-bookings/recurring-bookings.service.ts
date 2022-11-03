@@ -13,6 +13,7 @@ export class RecurringBookingsService {
 
   async create(
     createRecurringDto: CreateRecurringDto,
+    currentUserId: number,
   ): Promise<RecurringBooking> {
     const recurringBooking = new RecurringBooking();
     recurringBooking.createdAt = createRecurringDto.createdAt;
@@ -23,7 +24,7 @@ export class RecurringBookingsService {
     recurringBooking.daysOfWeek = createRecurringDto.daysOfWeek;
 
     const account = new Account();
-    account.id = createRecurringDto.ownerId;
+    account.id = currentUserId;
     recurringBooking.owner = account;
 
     const room = new Room();
