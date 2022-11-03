@@ -1,14 +1,14 @@
 import { DataSource, Repository } from 'typeorm';
 import { Room } from './room.entity';
-import { IRoomRepository } from './interfaces/rooms.repository.interface';
+import { IRoomsRepository } from './interfaces/rooms.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { addDaysToDate } from '../helpers/add-days-to-date';
 import { parseDateStringWithoutTime } from '../helpers/parse-date-string-without-time';
 
 @Injectable()
-export class RoomRepository
+export class RoomsRepository
   extends Repository<Room>
-  implements IRoomRepository
+  implements IRoomsRepository
 {
   constructor(private dataSource: DataSource) {
     super(Room, dataSource.createEntityManager());

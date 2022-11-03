@@ -1,6 +1,6 @@
-import { RecurringBooking } from 'src/recurringBookings/recurringBooking.entity';
 import { addDaysToDate } from '../../helpers/add-days-to-date';
 import { parseDateStringWithoutTime } from '../../helpers/parse-date-string-without-time';
+import { RecurringBooking } from '../recurring-booking.entity';
 
 export const reccurringBookingParsing = (
   recurringBooking: RecurringBooking,

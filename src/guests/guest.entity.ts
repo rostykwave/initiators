@@ -1,7 +1,7 @@
 import { Account } from '../accounts/account.entity';
-import { RecurringBooking } from '../recurringBookings/recurringBooking.entity';
+import { RecurringBooking } from '../recurring-bookings/recurring-booking.entity';
 import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { OneTimeBooking } from 'src/oneTimeBookings/oneTimeBooking.entity';
+import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 
 @Entity()
 export class Guest {
