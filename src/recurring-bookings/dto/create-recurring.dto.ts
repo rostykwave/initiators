@@ -1,11 +1,10 @@
-import { IsInt, Min, Max, IsDateString, IsDate } from 'class-validator';
-import { Guest } from 'src/guests/guest.entity';
+import { IsInt, Min, Max, IsDateString, Matches } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
 
 export class CreateRecurringDto {
   id?: number;
 
-  // @IsDate()
+  @IsDateString()
   createdAt: Date;
 
   @IsDateString()
@@ -14,8 +13,10 @@ export class CreateRecurringDto {
   @IsDateString()
   endDate: Date;
 
+  @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
   startTime: Date;
 
+  @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
   endTime: Date;
 
   daysOfWeek: DaysOfWeek[];
