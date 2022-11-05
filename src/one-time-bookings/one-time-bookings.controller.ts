@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { CreateOneTimeDto } from './dto/create-one-time.dto';
+import { OneTimeBookingDto } from './dto/one-time-booking.dto';
 import { OneTimeBooking } from './one-time-booking.entity';
 import { OneTimeBookingsService } from './one-time-bookings.service';
 
@@ -11,10 +11,10 @@ export class OneTimeBookingsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(
-    @Body() createOneTimeDto: CreateOneTimeDto,
+    @Body() oneTimeBookingDto: OneTimeBookingDto,
     @Request() req,
   ): Promise<OneTimeBooking> {
     const currentUserId = req.user.id;
-    return this.oneTimeBookingsService.create(createOneTimeDto, currentUserId);
+    return this.oneTimeBookingsService.create(oneTimeBookingDto, currentUserId);
   }
 }

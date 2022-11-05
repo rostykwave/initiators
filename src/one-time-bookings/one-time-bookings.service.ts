@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Account } from 'src/accounts/account.entity';
 import { Room } from 'src/rooms/room.entity';
-import { CreateOneTimeDto } from './dto/create-one-time.dto';
+import { CreateOneTimeDto } from './dto/one-time-booking.dto';
 import { OneTimeBooking } from './one-time-booking.entity';
 import { OneTimeBookingsRepository } from './one-time-bookings.repository';
 
