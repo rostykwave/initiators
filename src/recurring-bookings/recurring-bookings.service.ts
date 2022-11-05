@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Account } from 'src/accounts/account.entity';
 import { Room } from 'src/rooms/room.entity';
-import { CreateRecurringDto } from './dto/create-recurring.dto';
+import { RecurringBookingDto } from './dto/recurring-booking.dto';
 import { RecurringBooking } from './recurring-booking.entity';
 import { RecurringBookingsRepository } from './recurring-bookings.repository';
 
@@ -12,25 +12,34 @@ export class RecurringBookingsService {
   ) {}
 
   async create(
-    createRecurringDto: CreateRecurringDto,
+    recurringBookingDto: RecurringBookingDto,
     currentUserId: number,
   ): Promise<RecurringBooking> {
-    const recurringBooking = new RecurringBooking();
-    recurringBooking.createdAt = createRecurringDto.createdAt;
-    recurringBooking.startDate = createRecurringDto.startDate;
-    recurringBooking.endDate = createRecurringDto.endDate;
-    recurringBooking.startTime = createRecurringDto.startTime;
-    recurringBooking.endTime = createRecurringDto.endTime;
-    recurringBooking.daysOfWeek = createRecurringDto.daysOfWeek;
+    // const recurringBooking = new RecurringBooking();
+    // recurringBooking.createdAt = recurringBookingDto.createdAt;
+    // recurringBooking.startDate = recurringBookingDto.startDate;
+    // recurringBooking.endDate = recurringBookingDto.endDate;
+    // recurringBooking.startTime = recurringBookingDto.startTime;
+    // recurringBooking.endTime = recurringBookingDto.endTime;
+    // recurringBooking.daysOfWeek = recurringBookingDto.daysOfWeek;
 
     const account = new Account();
     account.id = currentUserId;
-    recurringBooking.owner = account;
+    // recurringBooking.owner = account;
 
     const room = new Room();
-    room.id = createRecurringDto.roomId;
-    recurringBooking.room = room;
+    room.id = recurringBookingDto.roomId;
+    // recurringBooking.room = room;
 
-    return this.recurringBookingsRepository.save(recurringBooking);
+    return this.recurringBookingsRepository.save({
+      createdAt: new Date(),
+      startDate: recurringBookingDto.startDate,
+      endDate: recurringBookingDto.endDate,
+      startTime: recurringBookingDto.startTime,
+      endTime: recurringBookingDto.endTime,
+      room,
+      owner: account,
+    });
+    // return this.recurringBookingsRepository.save(recurringBooking);
   }
 }
