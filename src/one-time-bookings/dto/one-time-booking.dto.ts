@@ -2,8 +2,8 @@ import { IsInt, Min, Max, IsDateString, Matches } from 'class-validator';
 
 export class OneTimeBookingDto {
 
-  @IsDateString()
-  createdAt: Date;
+  // @IsDateString()
+  // createdAt: Date;
 
   @IsDateString()
   meetingDate: Date;

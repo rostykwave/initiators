@@ -16,5 +16,9 @@ export class OneTimeBookingsController {
   ): Promise<OneTimeBooking> {
     const currentUserId = req.user.id;
     return this.oneTimeBookingsService.create(oneTimeBookingDto, currentUserId);
+    // return this.oneTimeBookingsService.create({
+    //   ...oneTimeBookingDto,
+    //   owner: req.user.id,
+    // });
   }
 }
