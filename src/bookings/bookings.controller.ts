@@ -9,15 +9,15 @@ import {
 } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { OneTimeBooking } from './one-time-booking.entity';
-import { OneTimeBookingsService } from './one-time-bookings.service';
+import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
+import { OneTimeBookingsService } from 'src/one-time-bookings/one-time-bookings.service';
 
-@Controller('one-time-bookings')
-export class OneTimeBookingsController {
+@Controller('bookings')
+export class BookingsController {
   constructor(private oneTimeBookingsService: OneTimeBookingsService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('own')
+  @Get('one-time/own')
   async findAllByOwnerId(
     @Request() req,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
