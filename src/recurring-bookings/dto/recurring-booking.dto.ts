@@ -3,7 +3,7 @@ import {
   Min,
   Max,
   IsDateString,
-  Matches,
+  IsMilitaryTime,
   IsEnum,
 } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
@@ -20,10 +20,12 @@ export class RecurringBookingDto {
   @IsDateString()
   endDate: Date;
 
-  @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
+  // @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
+  @IsMilitaryTime()
   startTime: Date;
 
-  @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
+  // @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
+  @IsMilitaryTime()
   endTime: Date;
 
   @IsEnum(DaysOfWeek, { each: true })
