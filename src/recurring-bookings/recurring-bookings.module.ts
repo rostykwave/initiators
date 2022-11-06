@@ -7,5 +7,6 @@ import { RecurringBookingsRepository } from './recurring-bookings.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([RecurringBooking])],
   providers: [RecurringBookingsService, RecurringBookingsRepository],
+  exports: [RecurringBookingsService],
 })
 export class RecurringBookingsModule {}

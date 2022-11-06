@@ -9,13 +9,6 @@ export class OneTimeBookingsService {
     private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
   ) {}
 
-  async findAll(ownerId: number): Promise<any> {
-    const allOneTimeBookings = await this.oneTimeBookingsRepository.findAll(
-      ownerId,
-    );
-    return allOneTimeBookings;
-  }
-
   async findAllPaginate(
     ownerId: number,
     options: IPaginationOptions,

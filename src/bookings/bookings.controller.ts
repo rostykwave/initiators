@@ -11,14 +11,19 @@ import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { OneTimeBookingsService } from 'src/one-time-bookings/one-time-bookings.service';
+import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
+import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
 
 @Controller('bookings')
+@UseGuards(JwtAuthGuard)
 export class BookingsController {
-  constructor(private oneTimeBookingsService: OneTimeBookingsService) {}
+  constructor(
+    private readonly oneTimeBookingsService: OneTimeBookingsService,
+    private readonly recurringBookingsService: RecurringBookingsService,
+  ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('one-time/own')
-  async findAllByOwnerId(
+  async findAllOneTimeBookings(
     @Request() req,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit: number,
@@ -28,5 +33,18 @@ export class BookingsController {
       limit,
     };
     return this.oneTimeBookingsService.findAllPaginate(req.user.id, options);
+  }
+
+  @Get('recurring/own')
+  async findAllRecurringBookings(
+    @Request() req,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit: number,
+  ): Promise<Pagination<RecurringBooking>> {
+    const options: IPaginationOptions = {
+      page,
+      limit,
+    };
+    return this.recurringBookingsService.findAllPaginate(req.user.id, options);
   }
 }
