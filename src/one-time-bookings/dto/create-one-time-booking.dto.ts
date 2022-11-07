@@ -1,4 +1,4 @@
-import { IsInt, Min, Max, IsDateString, IsMilitaryTime } from 'class-validator';
+import { IsInt, Min, IsDateString, IsMilitaryTime } from 'class-validator';
 
 export class CreateOneTimeBookingDto {
   @IsDateString()
@@ -11,7 +11,6 @@ export class CreateOneTimeBookingDto {
   endTime: Date;
 
   @Min(1)
-  @Max(8)
   @IsInt()
   roomId: number;
 }

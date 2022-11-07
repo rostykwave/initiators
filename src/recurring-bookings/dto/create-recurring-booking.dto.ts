@@ -1,7 +1,6 @@
 import {
   IsInt,
   Min,
-  Max,
   IsDateString,
   IsMilitaryTime,
   IsEnum,
@@ -27,7 +26,6 @@ export class CreateRecurringBookingDto {
   daysOfWeek: DaysOfWeek[];
 
   @Min(1)
-  @Max(8)
   @IsInt()
   roomId: number;
 }

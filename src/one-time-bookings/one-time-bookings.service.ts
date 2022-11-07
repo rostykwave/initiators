@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Account } from 'src/accounts/account.entity';
 import { Room } from 'src/rooms/room.entity';
+import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { CreateOneTimeBookingDto } from './dto/create-one-time-booking.dto';
-
 import { OneTimeBooking } from './one-time-booking.entity';
 import { OneTimeBookingsRepository } from './one-time-bookings.repository';
 
@@ -10,12 +10,26 @@ import { OneTimeBookingsRepository } from './one-time-bookings.repository';
 export class OneTimeBookingsService {
   constructor(
     private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
+    private readonly roomsRepository: RoomsRepository,
   ) {}
 
   async create(
     createOneTimeBookingDto: CreateOneTimeBookingDto,
     currentUserId: number,
   ): Promise<OneTimeBooking> {
+    const doesRoomExists = await this.roomsRepository.findOne({
+      where: {
+        id: createOneTimeBookingDto.roomId,
+      },
+    });
+
+    if (!doesRoomExists) {
+      throw new HttpException(
+        `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const account = new Account();
     account.id = currentUserId;
 
