@@ -5,7 +5,7 @@ import {
   IsMilitaryTime,
   Validate,
 } from 'class-validator';
-import { IsBeforeConstraint } from 'src/bookings/custom-validation-classes/IsBeforeConstraint';
+import { IsBeforeConstraint } from 'src/recurring-bookings/dto/custom-validation-classes/IsBeforeConstraint';
 
 export class CreateOneTimeBookingDto {
   @IsDateString()
