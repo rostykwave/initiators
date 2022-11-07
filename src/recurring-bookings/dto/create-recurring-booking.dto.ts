@@ -5,11 +5,14 @@ import {
   IsMilitaryTime,
   IsEnum,
   ArrayUnique,
+  Validate,
 } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
+import { IsBeforeConstraint } from './custom-validation-classes/IsBeforeConstraint';
 
 export class CreateRecurringBookingDto {
   @IsDateString()
+  @Validate(IsBeforeConstraint, ['endDate'])
   startDate: Date;
 
   @IsDateString()
