@@ -8,7 +8,7 @@ import {
   Validate,
 } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
-import { IsBeforeConstraint } from './custom-validation-classes/IsBeforeConstraint';
+import { IsBeforeConstraint } from '../../bookings/custom-validation-classes/IsBeforeConstraint';
 
 export class CreateRecurringBookingDto {
   @IsDateString()
@@ -19,6 +19,7 @@ export class CreateRecurringBookingDto {
   endDate: Date;
 
   @IsMilitaryTime()
+  @Validate(IsBeforeConstraint, ['endTime'])
   startTime: Date;
 
   @IsMilitaryTime()
