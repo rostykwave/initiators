@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Account } from 'src/accounts/account.entity';
 import { Room } from 'src/rooms/room.entity';
-import { RecurringBookingDto } from './dto/recurring-booking.dto';
+import { CreateRecurringBookingDto } from './dto/create-recurring-booking.dto';
 import { RecurringBooking } from './recurring-booking.entity';
 import { RecurringBookingsRepository } from './recurring-bookings.repository';
 
@@ -12,22 +12,22 @@ export class RecurringBookingsService {
   ) {}
 
   async create(
-    recurringBookingDto: RecurringBookingDto,
+    createRecurringBookingDto: CreateRecurringBookingDto,
     currentUserId: number,
   ): Promise<RecurringBooking> {
     const account = new Account();
     account.id = currentUserId;
 
     const room = new Room();
-    room.id = recurringBookingDto.roomId;
+    room.id = createRecurringBookingDto.roomId;
 
     const newRecurringBooking = this.recurringBookingsRepository.create({
       createdAt: new Date(),
-      startDate: recurringBookingDto.startDate,
-      endDate: recurringBookingDto.endDate,
-      startTime: recurringBookingDto.startTime,
-      endTime: recurringBookingDto.endTime,
-      daysOfWeek: recurringBookingDto.daysOfWeek,
+      startDate: createRecurringBookingDto.startDate,
+      endDate: createRecurringBookingDto.endDate,
+      startTime: createRecurringBookingDto.startTime,
+      endTime: createRecurringBookingDto.endTime,
+      daysOfWeek: createRecurringBookingDto.daysOfWeek,
       room,
       owner: account,
     });

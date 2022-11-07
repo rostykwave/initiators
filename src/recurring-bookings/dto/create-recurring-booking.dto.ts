@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
 
-export class RecurringBookingDto {
+export class CreateRecurringBookingDto {
   @IsDateString()
   startDate: Date;
 
