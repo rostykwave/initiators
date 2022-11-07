@@ -7,11 +7,7 @@ import { RoomsRepository } from 'src/rooms/rooms.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OneTimeBooking])],
-  providers: [
-    OneTimeBookingsService,
-    OneTimeBookingsRepository,
-    RoomsRepository,
-  ],
+  providers: [OneTimeBookingsService, OneTimeBookingsRepository],
   exports: [OneTimeBookingsService],
 })
 export class OneTimeBookingsModule {}

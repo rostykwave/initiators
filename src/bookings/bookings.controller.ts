@@ -6,6 +6,8 @@ import { OneTimeBookingsService } from 'src/one-time-bookings/one-time-bookings.
 import { CreateRecurringBookingDto } from 'src/recurring-bookings/dto/create-recurring-booking.dto';
 import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
+import { RoomsService } from 'src/rooms/rooms.service';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Controller('bookings')
 @UseGuards(JwtAuthGuard)
@@ -13,24 +15,45 @@ export class BookingsController {
   constructor(
     private readonly oneTimeBookingsService: OneTimeBookingsService,
     private readonly recurringBookingsService: RecurringBookingsService,
+    private readonly roomsService: RoomsService,
   ) {}
 
   @Post('one-time')
-  createOneTimeBooking(
+  async createOneTimeBooking(
     @Body() createOneTimeBookingDto: CreateOneTimeBookingDto,
     @Request() req,
   ): Promise<OneTimeBooking> {
-    return this.oneTimeBookingsService.create(
+    const doesRoomExists = await this.roomsService.findOneRoom(
+      createOneTimeBookingDto.roomId,
+    );
+
+    if (!doesRoomExists) {
+      throw new HttpException(
+        `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return await this.oneTimeBookingsService.create(
       createOneTimeBookingDto,
       req.user.id,
     );
   }
 
   @Post('recurring')
-  createRecurringBooking(
+  async createRecurringBooking(
     @Body() createRecurringBookingDto: CreateRecurringBookingDto,
     @Request() req,
   ): Promise<RecurringBooking> {
+    const doesRoomExists = await this.roomsService.findOneRoom(
+      createRecurringBookingDto.roomId,
+    );
+
+    if (!doesRoomExists) {
+      throw new HttpException(
+        `Room with id ${createRecurringBookingDto.roomId} not found. Try another one.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     return this.recurringBookingsService.create(
       createRecurringBookingDto,
       req.user.id,
