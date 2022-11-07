@@ -14,7 +14,6 @@ export class OneTimeBookingsController {
     @Body() oneTimeBookingDto: OneTimeBookingDto,
     @Request() req,
   ): Promise<OneTimeBooking> {
-    const currentUserId = req.user.id;
-    return this.oneTimeBookingsService.create(oneTimeBookingDto, currentUserId);
+    return this.oneTimeBookingsService.create(oneTimeBookingDto, req.user.id);
   }
 }

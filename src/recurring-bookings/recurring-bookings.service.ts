@@ -15,23 +15,13 @@ export class RecurringBookingsService {
     recurringBookingDto: RecurringBookingDto,
     currentUserId: number,
   ): Promise<RecurringBooking> {
-    // const recurringBooking = new RecurringBooking();
-    // recurringBooking.createdAt = recurringBookingDto.createdAt;
-    // recurringBooking.startDate = recurringBookingDto.startDate;
-    // recurringBooking.endDate = recurringBookingDto.endDate;
-    // recurringBooking.startTime = recurringBookingDto.startTime;
-    // recurringBooking.endTime = recurringBookingDto.endTime;
-    // recurringBooking.daysOfWeek = recurringBookingDto.daysOfWeek;
-
     const account = new Account();
     account.id = currentUserId;
-    // recurringBooking.owner = account;
 
     const room = new Room();
     room.id = recurringBookingDto.roomId;
-    // recurringBooking.room = room;
 
-    return this.recurringBookingsRepository.save({
+    const newRecurringBooking = this.recurringBookingsRepository.create({
       createdAt: new Date(),
       startDate: recurringBookingDto.startDate,
       endDate: recurringBookingDto.endDate,
@@ -40,6 +30,7 @@ export class RecurringBookingsService {
       room,
       owner: account,
     });
-    // return this.recurringBookingsRepository.save(recurringBooking);
+
+    return this.recurringBookingsRepository.save(newRecurringBooking);
   }
 }

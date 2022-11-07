@@ -14,10 +14,9 @@ export class RecurringBookingsController {
     @Body() recurringBookingDto: RecurringBookingDto,
     @Request() req,
   ): Promise<RecurringBooking> {
-    const currentUserId = req.user.id;
     return this.recurringBookingsService.create(
       recurringBookingDto,
-      currentUserId,
+      req.user.id,
     );
   }
 }

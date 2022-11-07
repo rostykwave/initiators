@@ -1,17 +1,12 @@
 import { IsInt, Min, Max, IsDateString, IsMilitaryTime } from 'class-validator';
 
 export class OneTimeBookingDto {
-  // @IsDateString()
-  // createdAt: Date;
-
   @IsDateString()
   meetingDate: Date;
 
-  // @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
   @IsMilitaryTime()
   startTime: Date;
 
-  // @Matches(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/gm)
   @IsMilitaryTime()
   endTime: Date;
 
