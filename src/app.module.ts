@@ -13,6 +13,7 @@ import { AppDataSource } from 'ormconfig';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { MailModule } from './email/email.module';
+import { BookingsModule } from './bookings/bookings.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MailModule } from './email/email.module';
     AuthModule,
     AdminModule,
     MailModule,
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
