@@ -27,6 +27,7 @@ export class RecurringBookingsService {
       endDate: recurringBookingDto.endDate,
       startTime: recurringBookingDto.startTime,
       endTime: recurringBookingDto.endTime,
+      daysOfWeek: recurringBookingDto.daysOfWeek,
       room,
       owner: account,
     });

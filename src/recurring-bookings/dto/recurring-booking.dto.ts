@@ -5,6 +5,7 @@ import {
   IsDateString,
   IsMilitaryTime,
   IsEnum,
+  ArrayUnique,
 } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
 
@@ -21,6 +22,7 @@ export class RecurringBookingDto {
   @IsMilitaryTime()
   endTime: Date;
 
+  @ArrayUnique()
   @IsEnum(DaysOfWeek, { each: true })
   daysOfWeek: DaysOfWeek[];
 
