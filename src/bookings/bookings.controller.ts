@@ -12,7 +12,10 @@ import {
   Body,
 } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { Role } from 'src/accounts/account.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 import { CreateOneTimeBookingDto } from 'src/one-time-bookings/dto/create-one-time-booking.dto';
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { OneTimeBookingsService } from 'src/one-time-bookings/one-time-bookings.service';
@@ -26,7 +29,9 @@ import { ServiceException } from './exceptions/service.exception';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.USER)
 export class BookingsController {
   constructor(
     private readonly oneTimeBookingsService: OneTimeBookingsService,
