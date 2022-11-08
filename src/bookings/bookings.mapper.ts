@@ -40,17 +40,27 @@ export class BookingsMapper {
         if (
           recurringBooking.daysOfWeek.includes(nextDayOfWeek) &&
           nextDate.getTime() >= today.getTime()
-        ) {``
-          const booking = {
-            id: recurringBooking.id,
-            createdAt: recurringBooking.createdAt,
-            isRecurring: true,
-            meetingDate: parseDateStringWithoutTime(nextDate),
-            startTime: recurringBooking.startTime,
-            endTime: recurringBooking.endTime,
-            room: recurringBooking.room,
-          };
-          mappedBookings.push(booking);
+        ) {
+          const bookingDto = new BookingDto();
+          bookingDto.id = recurringBooking.id;
+          bookingDto.createdAt = recurringBooking.createdAt;
+          bookingDto.isRecurring = true;
+          bookingDto.meetingDate = parseDateStringWithoutTime(nextDate);
+          bookingDto.startTime = recurringBooking.startTime;
+          bookingDto.endTime = recurringBooking.endTime;
+          bookingDto.room = recurringBooking.room;
+          mappedBookings.push(bookingDto);
+
+          // const booking = {
+          //   id: recurringBooking.id,
+          //   createdAt: recurringBooking.createdAt,
+          //   isRecurring: true,
+          //   meetingDate: parseDateStringWithoutTime(nextDate),
+          //   startTime: recurringBooking.startTime,
+          //   endTime: recurringBooking.endTime,
+          //   room: recurringBooking.room,
+          // };
+          // mappedBookings.push(booking);
         }
       }
       return mappedBookings;

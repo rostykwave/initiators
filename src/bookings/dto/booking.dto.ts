@@ -7,7 +7,7 @@ export class BookingDto {
 
   isRecurring: boolean;
 
-  meetingDate: Date;
+  meetingDate: Date | string;
 
   startTime: Date;
 

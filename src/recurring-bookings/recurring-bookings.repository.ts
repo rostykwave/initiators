@@ -7,6 +7,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { parseDateStringWithoutTime } from 'src/helpers/parse-date-string-without-time';
 
 @Injectable()
 export class RecurringBookingsRepository
@@ -18,9 +19,14 @@ export class RecurringBookingsRepository
   }
 
   async findAllByOwnerId(ownerId: number): Promise<RecurringBooking[]> {
+    const fromDateString = parseDateStringWithoutTime(new Date());
+
     return await this.createQueryBuilder('recurringBookings')
       .leftJoinAndSelect('recurringBookings.room', 'room')
       .where('recurringBookings.owner.id = :ownerId', { ownerId })
+      .where('recurringBookings.endDate >= :start_at', {
+        start_at: fromDateString,
+      })
       .orderBy('recurringBookings.startDate', 'ASC')
       .getMany();
   }
