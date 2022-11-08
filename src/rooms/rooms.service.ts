@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BookingsMapper } from 'src/bookings/bookings.mapper';
 import { sortBookingsByTimeAndDate } from 'src/one-time-bookings/helpers/sort-bookings-by-time-and-date';
+import { filterReccurringBookingsBySoonestBookingsDays } from './helpers/filter-by-soonest-bookings-days';
 import { IAllRoomsUpdated } from './interfaces/all-rooms-updated.interface';
 import { Room } from './room.entity';
 import { RoomsRepository } from './rooms.repository';
@@ -30,6 +31,19 @@ export class RoomsService {
     );
 
     const allRoomsUpdated = allRooms.map((room) => {
+      const allreccurringBookings = this.bookingsMapper.mapRecurringBookings(
+        room.recurringBookings,
+      );
+      const soonestRecurringBookings =
+        filterReccurringBookingsBySoonestBookingsDays(
+          allreccurringBookings,
+          soonestBookingsDays,
+        );
+
+      const soonestOneTimeBookings = this.bookingsMapper.mapOneTimeBookings(
+        room.oneTimeBookings,
+      );
+
       const updateRoom = {
         id: room.id,
         name: room.name,
@@ -38,8 +52,8 @@ export class RoomsService {
         maxPeople: room.maxPeople,
         minPeople: room.minPeople,
         soonestBookings: sortBookingsByTimeAndDate([
-          ...this.bookingsMapper.mapOneTimeBookings(room.oneTimeBookings),
-          ...this.bookingsMapper.mapRecurringBookings(room.recurringBookings),
+          ...soonestOneTimeBookings,
+          ...soonestRecurringBookings,
         ]),
       };
 

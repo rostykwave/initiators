@@ -31,7 +31,7 @@ export class BookingsMapper {
       const daysBetweenStartAndEndDate =
         (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
 
-      const parsedBookings = [];
+      const mappedBookings = [];
 
       for (let i = 0; i < daysBetweenStartAndEndDate; i++) {
         const nextDate = addDaysToDate(startDate, i);
@@ -40,7 +40,7 @@ export class BookingsMapper {
         if (
           recurringBooking.daysOfWeek.includes(nextDayOfWeek) &&
           nextDate.getTime() >= today.getTime()
-        ) {
+        ) {``
           const booking = {
             id: recurringBooking.id,
             createdAt: recurringBooking.createdAt,
@@ -50,10 +50,10 @@ export class BookingsMapper {
             endTime: recurringBooking.endTime,
             room: recurringBooking.room,
           };
-          parsedBookings.push(booking);
+          mappedBookings.push(booking);
         }
       }
-      return parsedBookings;
+      return mappedBookings;
     });
   }
 }
