@@ -29,7 +29,6 @@ import { ServiceException } from './exceptions/service.exception';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
-// @UseGuards(JwtAuthGuard)
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN, Role.USER)
 export class BookingsController {
@@ -87,26 +86,11 @@ export class BookingsController {
       );
     } catch (error) {
       if (error instanceof ServiceException) {
-        throw new HttpException(error.message, error.getStatus());
+        throw new HttpException(error.message, 404);
       } else {
         throw error;
       }
     }
-    //   const doesRoomExists = await this.roomsService.findOneRoom(
-    //     createOneTimeBookingDto.roomId,
-    //   );
-
-    //   if (!doesRoomExists) {
-    //     throw new HttpException(
-    //       `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
-    //       HttpStatus.NOT_FOUND,
-    //     );
-    //   }
-
-    // return await this.oneTimeBookingsService.create(
-    //   createOneTimeBookingDto,
-    //   req.user.id,
-    // );
   }
 
   @Post('recurring')

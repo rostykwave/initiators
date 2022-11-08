@@ -14,6 +14,14 @@ export class RoomsRepository
     super(Room, dataSource.createEntityManager());
   }
 
+  async findOneById(id: number) {
+    return this.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
   async findAllRooms(officeId: number, soonestBookingsDays: number) {
     const fromDateString = parseDateStringWithoutTime(new Date());
 

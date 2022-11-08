@@ -26,16 +26,13 @@ export class RecurringBookingsService {
     createRecurringBookingDto: CreateRecurringBookingDto,
     currentUserId: number,
   ): Promise<RecurringBooking> {
-    const doesRoomExists = await this.roomsRepository.findOne({
-      where: {
-        id: createRecurringBookingDto.roomId,
-      },
-    });
+    const doesRoomExists = await this.roomsRepository.findOneById(
+      createRecurringBookingDto.roomId,
+    );
 
     if (!doesRoomExists) {
       throw new ServiceException(
         `Room with id ${createRecurringBookingDto.roomId} not found. Try another one.`,
-        404,
       );
     }
     const account = new Account();

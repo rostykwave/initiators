@@ -26,16 +26,13 @@ export class OneTimeBookingsService {
     createOneTimeBookingDto: CreateOneTimeBookingDto,
     currentUserId: number,
   ): Promise<OneTimeBooking> {
-    const doesRoomExists = await this.roomsRepository.findOne({
-      where: {
-        id: createOneTimeBookingDto.roomId,
-      },
-    });
+    const doesRoomExists = await this.roomsRepository.findOneById(
+      createOneTimeBookingDto.roomId,
+    );
 
     if (!doesRoomExists) {
       throw new ServiceException(
         `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
-        404,
       );
     }
 

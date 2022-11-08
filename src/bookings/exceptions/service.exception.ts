@@ -1,7 +1,5 @@
-import { HttpException } from '@nestjs/common';
-
-export class ServiceException extends HttpException {
-  constructor(private details, private code) {
-    super(details, code);
+export class ServiceException extends Error {
+  constructor(message) {
+    super(message);
   }
 }
