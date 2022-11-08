@@ -22,6 +22,7 @@ import { RecurringBookingsService } from 'src/recurring-bookings/recurring-booki
 import { RoomsService } from 'src/rooms/rooms.service';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './dto/booking.dto';
+import { ServiceException } from './exceptions/service.exception';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
@@ -74,20 +75,33 @@ export class BookingsController {
     @Body() createOneTimeBookingDto: CreateOneTimeBookingDto,
     @Request() req,
   ): Promise<OneTimeBooking> {
-    const doesRoomExists = await this.roomsService.findOneRoom(
-      createOneTimeBookingDto.roomId,
-    );
-
-    if (!doesRoomExists) {
-      throw new HttpException(
-        `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
-        HttpStatus.NOT_FOUND,
+    try {
+      return await this.oneTimeBookingsService.create(
+        createOneTimeBookingDto,
+        req.user.id,
       );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, error.getStatus());
+      } else {
+        throw error;
+      }
     }
-    return await this.oneTimeBookingsService.create(
-      createOneTimeBookingDto,
-      req.user.id,
-    );
+    //   const doesRoomExists = await this.roomsService.findOneRoom(
+    //     createOneTimeBookingDto.roomId,
+    //   );
+
+    //   if (!doesRoomExists) {
+    //     throw new HttpException(
+    //       `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
+    //       HttpStatus.NOT_FOUND,
+    //     );
+    //   }
+
+    // return await this.oneTimeBookingsService.create(
+    //   createOneTimeBookingDto,
+    //   req.user.id,
+    // );
   }
 
   @Post('recurring')

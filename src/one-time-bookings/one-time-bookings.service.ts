@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
+import { ServiceException } from 'src/bookings/exceptions/service.exception';
 import { Room } from 'src/rooms/room.entity';
+import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { CreateOneTimeBookingDto } from './dto/create-one-time-booking.dto';
 import { OneTimeBooking } from './one-time-booking.entity';
 import { OneTimeBookingsRepository } from './one-time-bookings.repository';
@@ -10,6 +12,7 @@ import { OneTimeBookingsRepository } from './one-time-bookings.repository';
 export class OneTimeBookingsService {
   constructor(
     private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
+    private readonly roomsRepository: RoomsRepository,
   ) {}
 
   async findAllPaginate(
@@ -23,6 +26,19 @@ export class OneTimeBookingsService {
     createOneTimeBookingDto: CreateOneTimeBookingDto,
     currentUserId: number,
   ): Promise<OneTimeBooking> {
+    const doesRoomExists = await this.roomsRepository.findOne({
+      where: {
+        id: createOneTimeBookingDto.roomId,
+      },
+    });
+
+    if (!doesRoomExists) {
+      throw new ServiceException(
+        `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
+        404,
+      );
+    }
+
     const account = new Account();
     account.id = currentUserId;
 
