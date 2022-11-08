@@ -24,11 +24,12 @@ export const reccurringBookingParsing = (
     ) {
       const booking = {
         id: recurringBooking.id,
-        isRecurring: true,
         createdAt: recurringBooking.createdAt,
+        isRecurring: true,
         meetingDate: parseDateStringWithoutTime(nextDate),
         startTime: recurringBooking.startTime,
         endTime: recurringBooking.endTime,
+        room: recurringBooking.room,
       };
       parsedBookings.push(booking);
     }

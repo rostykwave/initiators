@@ -14,16 +14,21 @@ export class BookingsService {
   ) {}
 
   async findAllOwnBookings(ownerId: number): Promise<OneTimeBooking[]> {
+    const allOwnOneTimeBookings =
+      await this.oneTimeBookingsRepository.findAllByOwnerId(ownerId);
+
     const allOwnRecurringBookings =
       await this.recurringBookingsRepository.findAllByOwnerId(ownerId);
-
     const allOwnRecurringBookingsParsed = allOwnRecurringBookings.flatMap(
       (booking) => reccurringBookingParsing(booking),
     );
 
-    const sorted = sortOneTimeBookingsByTimeAndDate(
-      allOwnRecurringBookingsParsed,
-    );
+    const allBookings = [
+      ...allOwnOneTimeBookings,
+      ...allOwnRecurringBookingsParsed,
+    ];
+
+    const sorted = sortOneTimeBookingsByTimeAndDate(allBookings);
 
     return sorted;
     // return allOwnRecurringBookingsParsed;
