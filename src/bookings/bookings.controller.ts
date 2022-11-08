@@ -21,6 +21,7 @@ import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entit
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
 import { RoomsService } from 'src/rooms/rooms.service';
 import { BookingsService } from './bookings.service';
+import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
 @UseGuards(JwtAuthGuard)
@@ -37,12 +38,8 @@ export class BookingsController {
     @Request() req,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit: number,
-  ): Promise<OneTimeBooking[]> {
-    // const options: IPaginationOptions = {
-    //   page,
-    //   limit,
-    // };
-    return this.bookingsService.findAllOwnBookings(req.user.id);
+  ): Promise<IBookingsPagination<OneTimeBooking>> {
+    return this.bookingsService.findAllOwnBookings(req.user.id, page, limit);
   }
 
   @Get('one-time/own')

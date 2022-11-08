@@ -3,8 +3,8 @@ import { sortOneTimeBookingsByTimeAndDate } from 'src/one-time-bookings/helpers/
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookings.repository';
 import { reccurringBookingParsing } from 'src/recurring-bookings/helpers/reccurring-booking-parsing';
-import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
+import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Injectable()
 export class BookingsService {
@@ -13,7 +13,11 @@ export class BookingsService {
     private readonly recurringBookingsRepository: RecurringBookingsRepository,
   ) {}
 
-  async findAllOwnBookings(ownerId: number): Promise<OneTimeBooking[]> {
+  async findAllOwnBookings(
+    ownerId: number,
+    page: number,
+    limit: number,
+  ): Promise<IBookingsPagination<OneTimeBooking>> {
     const allOwnOneTimeBookings =
       await this.oneTimeBookingsRepository.findAllByOwnerId(ownerId);
 
@@ -28,10 +32,17 @@ export class BookingsService {
       ...allOwnRecurringBookingsParsed,
     ];
 
-    const sorted = sortOneTimeBookingsByTimeAndDate(allBookings);
+    const sortedAllBookings = sortOneTimeBookingsByTimeAndDate(allBookings);
+    const paginatedAndSortedAllBookings = sortedAllBookings.slice(
+      limit * (page - 1),
+      page * limit,
+    );
 
-    return sorted;
-    // return allOwnRecurringBookingsParsed;
-    // return this.oneTimeBookingsRepository.findAllByOwnerId(ownerId);
+    return {
+      bookings: paginatedAndSortedAllBookings,
+      page,
+      limit,
+      totalCount: sortedAllBookings.length,
+    };
   }
 }
