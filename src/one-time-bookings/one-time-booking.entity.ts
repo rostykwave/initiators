@@ -18,6 +18,9 @@ export class OneTimeBooking {
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
+  @Column({ default: false })
+  isRecurring: boolean;
+
   @Column({ type: 'date' })
   meetingDate: Date;
 
