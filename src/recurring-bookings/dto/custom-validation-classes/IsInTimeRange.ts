@@ -6,7 +6,7 @@ import {
 
 @ValidatorConstraint({ name: 'IsInTimeRange', async: false })
 export class IsInTimeRange implements ValidatorConstraintInterface {
-  private daysLimit = process.env.INTERVAL_RECURRING_BOOKING_IN_DAYS || 20;
+  private daysLimit = process.env.INTERVAL_RECURRING_BOOKING_IN_DAYS || 30;
 
   validate(propertyValue: string, args: ValidationArguments) {
     const endDate = new Date(`${propertyValue}`).getTime();

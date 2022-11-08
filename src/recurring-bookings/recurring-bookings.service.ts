@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
+import { ServiceException } from 'src/bookings/exceptions/service.exception';
 import { Room } from 'src/rooms/room.entity';
+import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { CreateRecurringBookingDto } from './dto/create-recurring-booking.dto';
 import { RecurringBooking } from './recurring-booking.entity';
 import { RecurringBookingsRepository } from './recurring-bookings.repository';
@@ -10,6 +12,7 @@ import { RecurringBookingsRepository } from './recurring-bookings.repository';
 export class RecurringBookingsService {
   constructor(
     private readonly recurringBookingsRepository: RecurringBookingsRepository,
+    private readonly roomsRepository: RoomsRepository,
   ) {}
 
   async findAllPaginate(
@@ -23,6 +26,15 @@ export class RecurringBookingsService {
     createRecurringBookingDto: CreateRecurringBookingDto,
     currentUserId: number,
   ): Promise<RecurringBooking> {
+    const roomFromQueryData = await this.roomsRepository.findOneById(
+      createRecurringBookingDto.roomId,
+    );
+
+    if (!roomFromQueryData) {
+      throw new ServiceException(
+        `Room with id ${createRecurringBookingDto.roomId} not found. Try another one.`,
+      );
+    }
     const account = new Account();
     account.id = currentUserId;
 

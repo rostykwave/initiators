@@ -7,6 +7,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { parseDateStringWithoutTime } from 'src/helpers/parse-date-string-without-time';
 
 @Injectable()
 export class OneTimeBookingsRepository
@@ -15,6 +16,19 @@ export class OneTimeBookingsRepository
 {
   constructor(private dataSource: DataSource) {
     super(OneTimeBooking, dataSource.createEntityManager());
+  }
+
+  async findAllByOwnerId(ownerId: number): Promise<OneTimeBooking[]> {
+    const fromDateString = parseDateStringWithoutTime(new Date());
+
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .where('oneTimeBookings.owner.id = :ownerId', { ownerId })
+      .where('oneTimeBookings.meetingDate >= :start_at', {
+        start_at: fromDateString,
+      })
+      .orderBy('oneTimeBookings.meetingDate', 'ASC')
+      .getMany();
   }
 
   async paginate(

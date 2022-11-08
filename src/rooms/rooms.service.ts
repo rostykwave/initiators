@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { filterReccurringBookingsBySoonestBookingsDays } from 'src/rooms/helpers/filter-by-soonest-bookings-days';
-import { reccurringBookingParsing } from '../recurring-bookings/helpers/reccurring-booking-parsing';
+import { BookingsMapper } from 'src/bookings/bookings.mapper';
+import { sortBookingsByTimeAndDate } from 'src/one-time-bookings/helpers/sort-bookings-by-time-and-date';
+import { filterReccurringBookingsBySoonestBookingsDays } from './helpers/filter-by-soonest-bookings-days';
 import { IAllRoomsUpdated } from './interfaces/all-rooms-updated.interface';
 import { Room } from './room.entity';
 import { RoomsRepository } from './rooms.repository';
 
 @Injectable()
 export class RoomsService {
-  constructor(private readonly roomsRepository: RoomsRepository) {}
+  constructor(
+    private readonly roomsRepository: RoomsRepository,
+    private readonly bookingsMapper: BookingsMapper,
+  ) {}
 
   async findOneRoom(id: number): Promise<Room> {
     return this.roomsRepository.findOne({
@@ -27,15 +31,17 @@ export class RoomsService {
     );
 
     const allRoomsUpdated = allRooms.map((room) => {
-      const soonestRecurringBookings = room.recurringBookings.flatMap(
-        (booking) => {
-          const allreccurringBookings = reccurringBookingParsing(booking);
+      const allreccurringBookings = this.bookingsMapper.mapRecurringBookings(
+        room.recurringBookings,
+      );
+      const soonestRecurringBookings =
+        filterReccurringBookingsBySoonestBookingsDays(
+          allreccurringBookings,
+          soonestBookingsDays,
+        );
 
-          return filterReccurringBookingsBySoonestBookingsDays(
-            allreccurringBookings,
-            soonestBookingsDays,
-          );
-        },
+      const soonestOneTimeBookings = this.bookingsMapper.mapOneTimeBookings(
+        room.oneTimeBookings,
       );
 
       const updateRoom = {
@@ -45,15 +51,10 @@ export class RoomsService {
         devices: room.devices,
         maxPeople: room.maxPeople,
         minPeople: room.minPeople,
-        soonestBookings: [
-          ...room.oneTimeBookings,
+        soonestBookings: sortBookingsByTimeAndDate([
+          ...soonestOneTimeBookings,
           ...soonestRecurringBookings,
-        ].sort((a, b) => {
-          return (
-            new Date(`${a.meetingDate} ${a.startTime}`).getTime() -
-            new Date(`${b.meetingDate} ${b.startTime}`).getTime()
-          );
-        }),
+        ]),
       };
 
       return updateRoom;

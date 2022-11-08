@@ -1,6 +1,5 @@
-import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
+import { BookingDto } from 'src/bookings/dto/booking.dto';
 import { Devices } from '../room.entity';
-import { IOneOfRecurrentBooking } from './one-of-recurrent-booking.interface';
 
 export interface IAllRoomsUpdated {
   id: number;
@@ -9,5 +8,5 @@ export interface IAllRoomsUpdated {
   devices: Devices[];
   maxPeople: number;
   minPeople: number;
-  soonestBookings: (IOneOfRecurrentBooking | OneTimeBooking)[];
+  soonestBookings: BookingDto[];
 }

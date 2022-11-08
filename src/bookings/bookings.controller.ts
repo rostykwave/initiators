@@ -12,7 +12,10 @@ import {
   Body,
 } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { Role } from 'src/accounts/account.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 import { CreateOneTimeBookingDto } from 'src/one-time-bookings/dto/create-one-time-booking.dto';
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { OneTimeBookingsService } from 'src/one-time-bookings/one-time-bookings.service';
@@ -20,15 +23,30 @@ import { CreateRecurringBookingDto } from 'src/recurring-bookings/dto/create-rec
 import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
 import { RoomsService } from 'src/rooms/rooms.service';
+import { BookingsService } from './bookings.service';
+import { BookingDto } from './dto/booking.dto';
+import { ServiceException } from './exceptions/service.exception';
+import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN, Role.USER)
 export class BookingsController {
   constructor(
     private readonly oneTimeBookingsService: OneTimeBookingsService,
     private readonly recurringBookingsService: RecurringBookingsService,
     private readonly roomsService: RoomsService,
+    private readonly bookingsService: BookingsService,
   ) {}
+
+  @Get('own')
+  async findAllOwnBookings(
+    @Request() req,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit: number,
+  ): Promise<IBookingsPagination<BookingDto>> {
+    return this.bookingsService.findAllOwnBookings(req.user.id, page, limit);
+  }
 
   @Get('one-time/own')
   async findAllOneTimeBookings(
@@ -61,20 +79,18 @@ export class BookingsController {
     @Body() createOneTimeBookingDto: CreateOneTimeBookingDto,
     @Request() req,
   ): Promise<OneTimeBooking> {
-    const doesRoomExists = await this.roomsService.findOneRoom(
-      createOneTimeBookingDto.roomId,
-    );
-
-    if (!doesRoomExists) {
-      throw new HttpException(
-        `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
-        HttpStatus.NOT_FOUND,
+    try {
+      return await this.oneTimeBookingsService.create(
+        createOneTimeBookingDto,
+        req.user.id,
       );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
     }
-    return await this.oneTimeBookingsService.create(
-      createOneTimeBookingDto,
-      req.user.id,
-    );
   }
 
   @Post('recurring')
