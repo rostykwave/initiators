@@ -2,11 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { filterReccurringBookingsBySoonestBookingsDays } from 'src/rooms/helpers/filter-by-soonest-bookings-days';
 import { reccurringBookingParsing } from '../recurring-bookings/helpers/reccurring-booking-parsing';
 import { IAllRoomsUpdated } from './interfaces/all-rooms-updated.interface';
+import { Room } from './room.entity';
 import { RoomsRepository } from './rooms.repository';
 
 @Injectable()
 export class RoomsService {
   constructor(private readonly roomsRepository: RoomsRepository) {}
+
+  async findOneRoom(id: number): Promise<Room> {
+    return this.roomsRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 
   async findAllRooms(
     officeId: number,
