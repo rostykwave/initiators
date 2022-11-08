@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { sortOneTimeBookingsByTimeAndDate } from 'src/one-time-bookings/helpers/sort-one-time-bookings-by-time-and-date';
+import { sortBookingsByTimeAndDate } from 'src/one-time-bookings/helpers/sort-bookings-by-time-and-date';
 import { filterReccurringBookingsBySoonestBookingsDays } from 'src/rooms/helpers/filter-by-soonest-bookings-days';
 import { reccurringBookingParsing } from '../recurring-bookings/helpers/reccurring-booking-parsing';
 import { IAllRoomsUpdated } from './interfaces/all-rooms-updated.interface';
@@ -46,7 +46,7 @@ export class RoomsService {
         devices: room.devices,
         maxPeople: room.maxPeople,
         minPeople: room.minPeople,
-        soonestBookings: sortOneTimeBookingsByTimeAndDate([
+        soonestBookings: sortBookingsByTimeAndDate([
           ...room.oneTimeBookings,
           ...soonestRecurringBookings,
         ]),

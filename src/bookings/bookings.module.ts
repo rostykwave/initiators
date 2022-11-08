@@ -5,6 +5,7 @@ import { RecurringBookingsModule } from 'src/recurring-bookings/recurring-bookin
 import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
 import { RoomsModule } from 'src/rooms/rooms.module';
 import { BookingsController } from './bookings.controller';
+import { BookingsMapper } from './bookings.mapper';
 import { BookingsService } from './bookings.service';
 
 @Module({
@@ -14,6 +15,7 @@ import { BookingsService } from './bookings.service';
     BookingsService,
     OneTimeBookingsRepository,
     RecurringBookingsRepository,
+    BookingsMapper,
   ],
 })
 export class BookingsModule {}

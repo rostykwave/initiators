@@ -21,6 +21,7 @@ import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entit
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
 import { RoomsService } from 'src/rooms/rooms.service';
 import { BookingsService } from './bookings.service';
+import { BookingDto } from './dto/booking.dto';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
@@ -38,7 +39,7 @@ export class BookingsController {
     @Request() req,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit: number,
-  ): Promise<IBookingsPagination<OneTimeBooking>> {
+  ): Promise<IBookingsPagination<BookingDto>> {
     return this.bookingsService.findAllOwnBookings(req.user.id, page, limit);
   }
 
