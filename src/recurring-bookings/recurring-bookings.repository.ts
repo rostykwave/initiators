@@ -17,6 +17,14 @@ export class RecurringBookingsRepository
     super(RecurringBooking, dataSource.createEntityManager());
   }
 
+  async findAllByOwnerId(ownerId: number): Promise<RecurringBooking[]> {
+    return await this.createQueryBuilder('recurringBookings')
+      .leftJoinAndSelect('recurringBookings.room', 'room')
+      .where('recurringBookings.owner.id = :ownerId', { ownerId })
+      .orderBy('recurringBookings.startDate', 'ASC')
+      .getMany();
+  }
+
   async paginate(
     ownerId: number,
     options: IPaginationOptions,

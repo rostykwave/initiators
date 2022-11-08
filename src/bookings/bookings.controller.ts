@@ -20,6 +20,7 @@ import { CreateRecurringBookingDto } from 'src/recurring-bookings/dto/create-rec
 import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
 import { RoomsService } from 'src/rooms/rooms.service';
+import { BookingsService } from './bookings.service';
 
 @Controller('bookings')
 @UseGuards(JwtAuthGuard)
@@ -28,7 +29,21 @@ export class BookingsController {
     private readonly oneTimeBookingsService: OneTimeBookingsService,
     private readonly recurringBookingsService: RecurringBookingsService,
     private readonly roomsService: RoomsService,
+    private readonly bookingsService: BookingsService,
   ) {}
+
+  @Get('own')
+  async findAllOwnBookings(
+    @Request() req,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit: number,
+  ): Promise<OneTimeBooking[]> {
+    // const options: IPaginationOptions = {
+    //   page,
+    //   limit,
+    // };
+    return this.bookingsService.findAllOwnBookings(req.user.id);
+  }
 
   @Get('one-time/own')
   async findAllOneTimeBookings(

@@ -17,6 +17,14 @@ export class OneTimeBookingsRepository
     super(OneTimeBooking, dataSource.createEntityManager());
   }
 
+  async findAllByOwnerId(ownerId: number): Promise<OneTimeBooking[]> {
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .where('oneTimeBookings.owner.id = :ownerId', { ownerId })
+      .orderBy('oneTimeBookings.meetingDate', 'ASC')
+      .getMany();
+  }
+
   async paginate(
     ownerId: number,
     options: IPaginationOptions,
