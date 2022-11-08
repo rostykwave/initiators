@@ -1,6 +1,8 @@
 import { Room } from 'src/rooms/room.entity';
 
 export class BookingDto {
+  id: number;
+
   createdAt: Date;
 
   isRecurring: boolean;

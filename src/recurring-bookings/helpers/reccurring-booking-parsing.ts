@@ -2,9 +2,7 @@ import { addDaysToDate } from '../../helpers/add-days-to-date';
 import { parseDateStringWithoutTime } from '../../helpers/parse-date-string-without-time';
 import { RecurringBooking } from '../recurring-booking.entity';
 
-export const reccurringBookingParsing = (
-  recurringBooking: RecurringBooking,
-) => {
+const reccurringBookingParsing = (recurringBooking: RecurringBooking) => {
   const today = new Date(parseDateStringWithoutTime(new Date()));
 
   const startDate = new Date(recurringBooking.startDate);

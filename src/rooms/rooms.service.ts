@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { BookingsMapper } from 'src/bookings/bookings.mapper';
 import { sortBookingsByTimeAndDate } from 'src/one-time-bookings/helpers/sort-bookings-by-time-and-date';
-import { filterReccurringBookingsBySoonestBookingsDays } from 'src/rooms/helpers/filter-by-soonest-bookings-days';
-import { reccurringBookingParsing } from '../recurring-bookings/helpers/reccurring-booking-parsing';
 import { IAllRoomsUpdated } from './interfaces/all-rooms-updated.interface';
 import { Room } from './room.entity';
 import { RoomsRepository } from './rooms.repository';
 
 @Injectable()
 export class RoomsService {
-  constructor(private readonly roomsRepository: RoomsRepository) {}
+  constructor(
+    private readonly roomsRepository: RoomsRepository,
+    private readonly bookingsMapper: BookingsMapper,
+  ) {}
 
   async findOneRoom(id: number): Promise<Room> {
     return this.roomsRepository.findOne({
@@ -28,17 +30,6 @@ export class RoomsService {
     );
 
     const allRoomsUpdated = allRooms.map((room) => {
-      const soonestRecurringBookings = room.recurringBookings.flatMap(
-        (booking) => {
-          const allreccurringBookings = reccurringBookingParsing(booking);
-
-          return filterReccurringBookingsBySoonestBookingsDays(
-            allreccurringBookings,
-            soonestBookingsDays,
-          );
-        },
-      );
-
       const updateRoom = {
         id: room.id,
         name: room.name,
@@ -47,8 +38,8 @@ export class RoomsService {
         maxPeople: room.maxPeople,
         minPeople: room.minPeople,
         soonestBookings: sortBookingsByTimeAndDate([
-          ...room.oneTimeBookings,
-          ...soonestRecurringBookings,
+          ...this.bookingsMapper.mapOneTimeBookings(room.oneTimeBookings),
+          ...this.bookingsMapper.mapRecurringBookings(room.recurringBookings),
         ]),
       };
 

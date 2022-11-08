@@ -10,8 +10,10 @@ export class BookingsMapper {
   mapOneTimeBookings(oneTimeBookings: OneTimeBooking[]): BookingDto[] {
     return oneTimeBookings.map((oneTimeBooking) => {
       const bookingDto = new BookingDto();
+      bookingDto.id = oneTimeBooking.id;
       bookingDto.createdAt = oneTimeBooking.createdAt;
       bookingDto.isRecurring = false;
+      bookingDto.meetingDate = oneTimeBooking.meetingDate;
       bookingDto.startTime = oneTimeBooking.startTime;
       bookingDto.endTime = oneTimeBooking.endTime;
       bookingDto.room = oneTimeBooking.room;
