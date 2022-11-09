@@ -12,6 +12,7 @@ import {
   Body,
   Param,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Role } from 'src/accounts/account.entity';
@@ -26,6 +27,7 @@ import { CreateRecurringBookingDto } from 'src/recurring-bookings/dto/create-rec
 import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
 import { RoomsService } from 'src/rooms/rooms.service';
+import { DeleteResult } from 'typeorm';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './dto/booking.dto';
 import { ServiceException } from './exceptions/service.exception';
@@ -123,5 +125,12 @@ export class BookingsController {
     @Body() updateOneTimeBookingDto: UpdateOneTimeBookingDto,
   ): Promise<OneTimeBooking> {
     return this.oneTimeBookingsService.update(id, updateOneTimeBookingDto);
+  }
+
+  @Delete('one-time/:id')
+  deleteOneTimeBooking(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<DeleteResult> {
+    return this.oneTimeBookingsService.delete(id);
   }
 }

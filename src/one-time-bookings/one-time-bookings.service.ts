@@ -4,6 +4,7 @@ import { Account } from 'src/accounts/account.entity';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
 import { Room } from 'src/rooms/room.entity';
 import { RoomsRepository } from 'src/rooms/rooms.repository';
+import { DeleteResult } from 'typeorm';
 import { CreateOneTimeBookingDto } from './dto/create-one-time-booking.dto';
 import { UpdateOneTimeBookingDto } from './dto/update-one-time-booking.dto';
 import { OneTimeBooking } from './one-time-booking.entity';
@@ -88,5 +89,18 @@ export class OneTimeBookingsService {
     oneTimeBookingToUpdate.createdAt = new Date();
 
     return this.oneTimeBookingsRepository.save(oneTimeBookingToUpdate);
+  }
+
+  async delete(id: number): Promise<DeleteResult> {
+    const oneTimeBookingToDelete =
+      await this.oneTimeBookingsRepository.findOneBy({ id });
+
+    if (!oneTimeBookingToDelete) {
+      throw new NotFoundException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+
+    return this.oneTimeBookingsRepository.delete(id);
   }
 }
