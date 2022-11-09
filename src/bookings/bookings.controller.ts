@@ -26,6 +26,7 @@ import { RoomsService } from 'src/rooms/rooms.service';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './dto/booking.dto';
 import { ServiceException } from './exceptions/service.exception';
+import { IBookingsForCalendar } from './interfaces/bookings-for-calendar.interface';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
@@ -38,6 +39,21 @@ export class BookingsController {
     private readonly roomsService: RoomsService,
     private readonly bookingsService: BookingsService,
   ) {}
+
+  @Get('/')
+  async findAllBookingsForCalendar(
+    @Query('roomId', new DefaultValuePipe(1), ParseIntPipe) roomId: number,
+    @Query('officeId', new DefaultValuePipe(1), ParseIntPipe) officeId: number,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ): Promise<IBookingsForCalendar<BookingDto>> {
+    return this.bookingsService.findAllBookingsForCalendar(
+      roomId,
+      officeId,
+      startDate,
+      endDate,
+    );
+  }
 
   @Get('own')
   async findAllOwnBookings(

@@ -4,6 +4,7 @@ import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookin
 import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
 import { BookingsMapper } from './bookings.mapper';
 import { BookingDto } from './dto/booking.dto';
+import { IBookingsForCalendar } from './interfaces/bookings-for-calendar.interface';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Injectable()
@@ -13,6 +14,38 @@ export class BookingsService {
     private readonly recurringBookingsRepository: RecurringBookingsRepository,
     private readonly bookingsMapper: BookingsMapper,
   ) {}
+
+  async findAllBookingsForCalendar(
+    roomId: number,
+    officeId: number,
+    startDate: string,
+    endDate: string,
+  ): Promise<IBookingsForCalendar<BookingDto>> {
+    const allOneTimeBookingsForCalendar =
+      await this.oneTimeBookingsRepository.findAllByDateAndLocation(
+        roomId,
+        officeId,
+        startDate,
+        endDate,
+      );
+    // const allRecurringTimeBookingsForCalendar =
+    //   await this.recurringBookingsRepository.
+    const allBookings = [
+      ...this.bookingsMapper.mapOneTimeBookings(allOneTimeBookingsForCalendar),
+      // ...this.bookingsMapper.mapRecurringBookings(allRecurringTimeBookingsForCalendar),
+    ];
+    const sortedAllBookings = sortBookingsByTimeAndDate(allBookings);
+
+    return {
+      data: {
+        period: {
+          startDate,
+          endDate,
+        },
+        bookings: sortedAllBookings,
+      },
+    };
+  }
 
   async findAllOwnBookings(
     ownerId: number,
