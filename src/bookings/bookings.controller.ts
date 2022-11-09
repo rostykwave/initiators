@@ -41,14 +41,12 @@ export class BookingsController {
   ) {}
 
   @Get('/')
-  async findAllBookingsForCalendar(
-    @Query('roomId', new DefaultValuePipe(1), ParseIntPipe) roomId: number,
+  async findAllBookingsByOfficeIdInRange(
     @Query('officeId', new DefaultValuePipe(1), ParseIntPipe) officeId: number,
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
   ): Promise<IBookingsForCalendar<BookingDto>> {
-    return this.bookingsService.findAllBookingsForCalendar(
-      roomId,
+    return this.bookingsService.findAllBookingsByOfficeIdInRange(
       officeId,
       startDate,
       endDate,

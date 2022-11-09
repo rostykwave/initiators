@@ -15,24 +15,26 @@ export class BookingsService {
     private readonly bookingsMapper: BookingsMapper,
   ) {}
 
-  async findAllBookingsForCalendar(
-    roomId: number,
+  async findAllBookingsByOfficeIdInRange(
     officeId: number,
     startDate: string,
     endDate: string,
   ): Promise<IBookingsForCalendar<BookingDto>> {
-    const allOneTimeBookingsForCalendar =
-      await this.oneTimeBookingsRepository.findAllByDateAndLocation(
-        roomId,
+    const allOneTimeBookings =
+      await this.oneTimeBookingsRepository.findAllBookingsByOfficeIdInRange(
         officeId,
         startDate,
         endDate,
       );
-    // const allRecurringTimeBookingsForCalendar =
-    //   await this.recurringBookingsRepository.
+    const allRecurringTimeBookings =
+      await this.recurringBookingsRepository.findAllBookingsByOfficeIdInRange(
+        officeId,
+        startDate,
+      );
+
     const allBookings = [
-      ...this.bookingsMapper.mapOneTimeBookings(allOneTimeBookingsForCalendar),
-      // ...this.bookingsMapper.mapRecurringBookings(allRecurringTimeBookingsForCalendar),
+      ...this.bookingsMapper.mapOneTimeBookings(allOneTimeBookings),
+      ...this.bookingsMapper.mapRecurringBookings(allRecurringTimeBookings),
     ];
     const sortedAllBookings = sortBookingsByTimeAndDate(allBookings);
 
