@@ -10,6 +10,8 @@ import {
   HttpStatus,
   HttpException,
   Body,
+  Param,
+  Put,
 } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Role } from 'src/accounts/account.entity';
@@ -17,6 +19,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { CreateOneTimeBookingDto } from 'src/one-time-bookings/dto/create-one-time-booking.dto';
+import { UpdateOneTimeBookingDto } from 'src/one-time-bookings/dto/update-one-time-booking.dto';
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { OneTimeBookingsService } from 'src/one-time-bookings/one-time-bookings.service';
 import { CreateRecurringBookingDto } from 'src/recurring-bookings/dto/create-recurring-booking.dto';
@@ -112,5 +115,13 @@ export class BookingsController {
       createRecurringBookingDto,
       req.user.id,
     );
+  }
+
+  @Put('one-time/:id')
+  async updateOneTimeBooking(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOneTimeBookingDto: UpdateOneTimeBookingDto,
+  ): Promise<OneTimeBooking> {
+    return this.oneTimeBookingsService.update(id, updateOneTimeBookingDto);
   }
 }
