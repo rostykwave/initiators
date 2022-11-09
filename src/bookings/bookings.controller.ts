@@ -26,7 +26,7 @@ import { RoomsService } from 'src/rooms/rooms.service';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './dto/booking.dto';
 import { ServiceException } from './exceptions/service.exception';
-import { IBookingsForCalendar } from './interfaces/bookings-for-calendar.interface';
+import { IBookingsInRange } from './interfaces/bookings-in-range.interface';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
@@ -45,7 +45,7 @@ export class BookingsController {
     @Query('officeId', new DefaultValuePipe(1), ParseIntPipe) officeId: number,
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
-  ): Promise<IBookingsForCalendar<BookingDto>> {
+  ): Promise<IBookingsInRange<BookingDto>> {
     return this.bookingsService.findAllBookingsByOfficeIdInRange(
       officeId,
       startDate,

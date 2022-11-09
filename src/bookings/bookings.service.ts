@@ -4,7 +4,7 @@ import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookin
 import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
 import { BookingsMapper } from './bookings.mapper';
 import { BookingDto } from './dto/booking.dto';
-import { IBookingsForCalendar } from './interfaces/bookings-for-calendar.interface';
+import { IBookingsInRange } from './interfaces/bookings-in-range.interface';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class BookingsService {
     officeId: number,
     startDate: string,
     endDate: string,
-  ): Promise<IBookingsForCalendar<BookingDto>> {
+  ): Promise<IBookingsInRange<BookingDto>> {
     const allOneTimeBookings =
       await this.oneTimeBookingsRepository.findAllBookingsByOfficeIdInRange(
         officeId,
@@ -76,10 +76,12 @@ export class BookingsService {
     );
 
     return {
-      bookings: paginatedAndSortedAllBookings,
-      page,
-      limit,
-      totalCount: sortedAllBookings.length,
+      data: {
+        bookings: paginatedAndSortedAllBookings,
+        page,
+        limit,
+        totalCount: sortedAllBookings.length,
+      },
     };
   }
 }

@@ -1,4 +1,4 @@
-export interface IBookingsForCalendar<T> {
+export interface IBookingsInRange<T> {
   data: {
     period: {
       startDate: string;
