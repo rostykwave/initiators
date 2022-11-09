@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
 import { Room } from 'src/rooms/room.entity';
 import { RoomsRepository } from 'src/rooms/rooms.repository';
+import { DeleteResult } from 'typeorm';
 import { CreateRecurringBookingDto } from './dto/create-recurring-booking.dto';
+import { UpdateRecurringBookingDto } from './dto/update-recurring-booking.dto';
 import { RecurringBooking } from './recurring-booking.entity';
 import { RecurringBookingsRepository } from './recurring-bookings.repository';
 
@@ -53,5 +55,55 @@ export class RecurringBookingsService {
     });
 
     return this.recurringBookingsRepository.save(newRecurringBooking);
+  }
+
+  async update(
+    id: number,
+    updateRecurringBookingDto: UpdateRecurringBookingDto,
+  ): Promise<RecurringBooking> {
+    const recurringBookingToUpdate =
+      await this.recurringBookingsRepository.findOneBy({ id });
+
+    if (!recurringBookingToUpdate) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+
+    const roomFromQueryData = await this.roomsRepository.findOneById(
+      updateRecurringBookingDto.roomId,
+    );
+
+    if (!roomFromQueryData) {
+      throw new ServiceException(
+        `Room with id ${updateRecurringBookingDto.roomId} not found. Try another one.`,
+      );
+    }
+
+    const room = new Room();
+    room.id = updateRecurringBookingDto.roomId;
+
+    recurringBookingToUpdate.room = room;
+    recurringBookingToUpdate.startDate = updateRecurringBookingDto.startDate;
+    recurringBookingToUpdate.endDate = updateRecurringBookingDto.endDate;
+    recurringBookingToUpdate.startTime = updateRecurringBookingDto.startTime;
+    recurringBookingToUpdate.endTime = updateRecurringBookingDto.endTime;
+    recurringBookingToUpdate.daysOfWeek = updateRecurringBookingDto.daysOfWeek;
+    recurringBookingToUpdate.createdAt = new Date();
+
+    return this.recurringBookingsRepository.save(recurringBookingToUpdate);
+  }
+
+  async delete(id: number): Promise<DeleteResult> {
+    const recurringBookingToDelete =
+      await this.recurringBookingsRepository.findOneBy({ id });
+
+    if (!recurringBookingToDelete) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+
+    return this.recurringBookingsRepository.delete(id);
   }
 }

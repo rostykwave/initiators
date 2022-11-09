@@ -24,6 +24,7 @@ import { UpdateOneTimeBookingDto } from 'src/one-time-bookings/dto/update-one-ti
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { OneTimeBookingsService } from 'src/one-time-bookings/one-time-bookings.service';
 import { CreateRecurringBookingDto } from 'src/recurring-bookings/dto/create-recurring-booking.dto';
+import { UpdateRecurringBookingDto } from 'src/recurring-bookings/dto/update-recurring-booking.dto';
 import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
 import { RoomsService } from 'src/rooms/rooms.service';
@@ -124,13 +125,66 @@ export class BookingsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateOneTimeBookingDto: UpdateOneTimeBookingDto,
   ): Promise<OneTimeBooking> {
-    return this.oneTimeBookingsService.update(id, updateOneTimeBookingDto);
+    try {
+      return await this.oneTimeBookingsService.update(
+        id,
+        updateOneTimeBookingDto,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @Delete('one-time/:id')
-  deleteOneTimeBooking(
+  async deleteOneTimeBooking(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<DeleteResult> {
-    return this.oneTimeBookingsService.delete(id);
+    try {
+      return await this.oneTimeBookingsService.delete(id);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  @Put('recurring/:id')
+  async updateRecurringBooking(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRecurringBookingDto: UpdateRecurringBookingDto,
+  ): Promise<RecurringBooking> {
+    try {
+      return await this.recurringBookingsService.update(
+        id,
+        updateRecurringBookingDto,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  @Delete('recurring/:id')
+  async deleteRecurringBooking(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<DeleteResult> {
+    try {
+      return await this.recurringBookingsService.delete(id);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
   }
 }

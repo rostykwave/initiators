@@ -64,7 +64,7 @@ export class OneTimeBookingsService {
       await this.oneTimeBookingsRepository.findOneBy({ id });
 
     if (!oneTimeBookingToUpdate) {
-      throw new NotFoundException(
+      throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
       );
     }
@@ -74,7 +74,7 @@ export class OneTimeBookingsService {
     );
 
     if (!roomFromQueryData) {
-      throw new NotFoundException(
+      throw new ServiceException(
         `Room with id ${updateOneTimeBookingDto.roomId} not found. Try another one.`,
       );
     }
@@ -96,7 +96,7 @@ export class OneTimeBookingsService {
       await this.oneTimeBookingsRepository.findOneBy({ id });
 
     if (!oneTimeBookingToDelete) {
-      throw new NotFoundException(
+      throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
       );
     }
