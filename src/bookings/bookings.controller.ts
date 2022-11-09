@@ -112,19 +112,17 @@ export class BookingsController {
     @Body() createRecurringBookingDto: CreateRecurringBookingDto,
     @Request() req,
   ): Promise<RecurringBooking> {
-    const doesRoomExists = await this.roomsService.findOneRoom(
-      createRecurringBookingDto.roomId,
-    );
-
-    if (!doesRoomExists) {
-      throw new HttpException(
-        `Room with id ${createRecurringBookingDto.roomId} not found. Try another one.`,
-        HttpStatus.NOT_FOUND,
+    try {
+      return await this.recurringBookingsService.create(
+        createRecurringBookingDto,
+        req.user.id,
       );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
     }
-    return this.recurringBookingsService.create(
-      createRecurringBookingDto,
-      req.user.id,
-    );
   }
 }
