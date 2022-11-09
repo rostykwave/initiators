@@ -34,7 +34,11 @@ export class BookingsService {
 
     const allBookings = [
       ...this.bookingsMapper.mapOneTimeBookings(allOneTimeBookings),
-      ...this.bookingsMapper.mapRecurringBookings(allRecurringTimeBookings),
+      ...this.bookingsMapper.mapRecurringBookingsInRange(
+        allRecurringTimeBookings,
+        startDate,
+        endDate,
+      ),
     ];
     const sortedAllBookings = sortBookingsByTimeAndDate(allBookings);
 
