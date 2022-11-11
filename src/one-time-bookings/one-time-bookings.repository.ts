@@ -41,4 +41,12 @@ export class OneTimeBookingsRepository
       .orderBy('oneTimeBookings.id', 'ASC');
     return paginate<OneTimeBooking>(allOneTimeBookings, options);
   }
+
+  async findOneByIdAndOwnerId(id: number, ownerId: number) {
+    const booking = await this.createQueryBuilder('oneTimeBookings')
+      .where('oneTimeBookings.id = :id', { id })
+      .andWhere('oneTimeBookings.owner.id = :ownerId', { ownerId })
+      .getOne();
+    return booking;
+  }
 }

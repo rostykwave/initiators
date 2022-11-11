@@ -91,6 +91,35 @@ export class OneTimeBookingsService {
     return this.oneTimeBookingsRepository.save(oneTimeBookingToUpdate);
   }
 
+  async updateOwn(
+    id: number,
+    currentUserId: number,
+    updateOneTimeBookingDto: UpdateOneTimeBookingDto,
+  ) {
+    // Check if booking exists
+    const oneTimeBookingToUpdate =
+      await this.oneTimeBookingsRepository.findOneBy({ id });
+
+    if (!oneTimeBookingToUpdate) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+
+    // Check if currentUserId (ownerId in db) exists in booking
+    const oneTimeBookingToUpdateSafe =
+      await this.oneTimeBookingsRepository.findOneByIdAndOwnerId(
+        id,
+        currentUserId,
+      );
+
+    if (!oneTimeBookingToUpdateSafe) {
+      throw new ServiceException(`You can change only own booking.`);
+    }
+
+    return this.update(id, updateOneTimeBookingDto);
+  }
+
   async delete(id: number): Promise<DeleteResult> {
     const oneTimeBookingToDelete =
       await this.oneTimeBookingsRepository.findOneBy({ id });
@@ -99,6 +128,31 @@ export class OneTimeBookingsService {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
       );
+    }
+
+    return this.oneTimeBookingsRepository.delete(id);
+  }
+
+  async deleteOwn(id: number, currentUserId: number): Promise<DeleteResult> {
+    // Check if booking exists
+    const oneTimeBookingToDelete =
+      await this.oneTimeBookingsRepository.findOneBy({ id });
+
+    if (!oneTimeBookingToDelete) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+
+    // Check if currentUserId (ownerId in db) exists in booking
+    const oneTimeBookingToDeleteSafe =
+      await this.oneTimeBookingsRepository.findOneByIdAndOwnerId(
+        id,
+        currentUserId,
+      );
+
+    if (!oneTimeBookingToDeleteSafe) {
+      throw new ServiceException(`You can delete only own booking.`);
     }
 
     return this.oneTimeBookingsRepository.delete(id);

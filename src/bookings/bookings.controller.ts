@@ -120,8 +120,10 @@ export class BookingsController {
     );
   }
 
-  @Put('one-time/:id')
-  async updateOneTimeBooking(
+  // Allows admin update all one-time bookings
+  @Roles(Role.ADMIN)
+  @Put('one-time/admin/:id')
+  async updateOneTimeBookingAdmin(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateOneTimeBookingDto: UpdateOneTimeBookingDto,
   ): Promise<OneTimeBooking> {
@@ -139,12 +141,55 @@ export class BookingsController {
     }
   }
 
-  @Delete('one-time/:id')
-  async deleteOneTimeBooking(
+  // Allows user update only own one-time bookings
+  @Roles(Role.USER)
+  @Put('one-time/user/:id')
+  async updateOneTimeBookingUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOneTimeBookingDto: UpdateOneTimeBookingDto,
+    @Request() req,
+  ): Promise<OneTimeBooking> {
+    try {
+      return await this.oneTimeBookingsService.updateOwn(
+        id,
+        req.user.id,
+        updateOneTimeBookingDto,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  // Allows admin delete all one-time bookings
+  @Roles(Role.ADMIN)
+  @Delete('one-time/admin/:id')
+  async deleteOneTimeBookingAdmin(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<DeleteResult> {
     try {
       return await this.oneTimeBookingsService.delete(id);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  // Allows user delete only own one-time bookings
+  @Roles(Role.USER)
+  @Delete('one-time/user/:id')
+  async deleteOneTimeBookingUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ): Promise<DeleteResult> {
+    try {
+      return await this.oneTimeBookingsService.deleteOwn(id, req.user.id);
     } catch (error) {
       if (error instanceof ServiceException) {
         throw new HttpException(error.message, 404);
