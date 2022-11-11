@@ -86,7 +86,6 @@ export class OneTimeBookingsService {
     oneTimeBookingToUpdate.meetingDate = updateOneTimeBookingDto.meetingDate;
     oneTimeBookingToUpdate.startTime = updateOneTimeBookingDto.startTime;
     oneTimeBookingToUpdate.endTime = updateOneTimeBookingDto.endTime;
-    oneTimeBookingToUpdate.createdAt = new Date();
 
     return this.oneTimeBookingsRepository.save(oneTimeBookingToUpdate);
   }

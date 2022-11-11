@@ -89,7 +89,6 @@ export class RecurringBookingsService {
     recurringBookingToUpdate.startTime = updateRecurringBookingDto.startTime;
     recurringBookingToUpdate.endTime = updateRecurringBookingDto.endTime;
     recurringBookingToUpdate.daysOfWeek = updateRecurringBookingDto.daysOfWeek;
-    recurringBookingToUpdate.createdAt = new Date();
 
     return this.recurringBookingsRepository.save(recurringBookingToUpdate);
   }
