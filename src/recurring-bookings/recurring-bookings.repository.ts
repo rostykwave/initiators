@@ -43,4 +43,12 @@ export class RecurringBookingsRepository
       .orderBy('recurringBookings.id', 'ASC');
     return paginate<RecurringBooking>(allRecurringBookings, options);
   }
+
+  async findOneByIdAndOwnerId(id: number, ownerId: number) {
+    const booking = await this.createQueryBuilder('recurringBookings')
+      .where('recurringBookings.id = :id', { id })
+      .andWhere('recurringBookings.owner.id = :ownerId', { ownerId })
+      .getOne();
+    return booking;
+  }
 }

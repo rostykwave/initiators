@@ -94,6 +94,35 @@ export class RecurringBookingsService {
     return this.recurringBookingsRepository.save(recurringBookingToUpdate);
   }
 
+  async updateOwn(
+    id: number,
+    currentUserId: number,
+    updateRecurringBookingDto: UpdateRecurringBookingDto,
+  ) {
+    // Check if booking exists
+    const recurringBookingToUpdate =
+      await this.recurringBookingsRepository.findOneBy({ id });
+
+    if (!recurringBookingToUpdate) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+
+    // Check if currentUserId (ownerId in db) exists in booking
+    const recurringBookingToUpdateSafe =
+      await this.recurringBookingsRepository.findOneByIdAndOwnerId(
+        id,
+        currentUserId,
+      );
+
+    if (!recurringBookingToUpdateSafe) {
+      throw new ServiceException(`You can change only own booking.`);
+    }
+
+    return this.update(id, updateRecurringBookingDto);
+  }
+
   async delete(id: number): Promise<DeleteResult> {
     const recurringBookingToDelete =
       await this.recurringBookingsRepository.findOneBy({ id });
@@ -102,6 +131,31 @@ export class RecurringBookingsService {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
       );
+    }
+
+    return this.recurringBookingsRepository.delete(id);
+  }
+
+  async deleteOwn(id: number, currentUserId: number): Promise<DeleteResult> {
+    // Check if booking exists
+    const recurringBookingToDelete =
+      await this.recurringBookingsRepository.findOneBy({ id });
+
+    if (!recurringBookingToDelete) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+
+    // Check if currentUserId (ownerId in db) exists in booking
+    const recurringBookingToDeleteSafe =
+      await this.recurringBookingsRepository.findOneByIdAndOwnerId(
+        id,
+        currentUserId,
+      );
+
+    if (!recurringBookingToDeleteSafe) {
+      throw new ServiceException(`You can delete only own booking.`);
     }
 
     return this.recurringBookingsRepository.delete(id);

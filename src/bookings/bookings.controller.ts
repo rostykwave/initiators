@@ -199,8 +199,10 @@ export class BookingsController {
     }
   }
 
-  @Put('recurring/:id')
-  async updateRecurringBooking(
+  // Allows admin update all recurring bookings
+  @Roles(Role.ADMIN)
+  @Put('recurring/admin/:id')
+  async updateRecurringBookingAdmin(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRecurringBookingDto: UpdateRecurringBookingDto,
   ): Promise<RecurringBooking> {
@@ -218,12 +220,55 @@ export class BookingsController {
     }
   }
 
-  @Delete('recurring/:id')
-  async deleteRecurringBooking(
+  // Allows user update only own recurring bookings
+  @Roles(Role.USER)
+  @Put('recurring/user/:id')
+  async updateRecurringBookingUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRecurringBookingDto: UpdateRecurringBookingDto,
+    @Request() req,
+  ): Promise<RecurringBooking> {
+    try {
+      return await this.recurringBookingsService.updateOwn(
+        id,
+        req.user.id,
+        updateRecurringBookingDto,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  // Allows admin delete all recurring bookings
+  @Roles(Role.ADMIN)
+  @Delete('recurring/admin/:id')
+  async deleteRecurringBookingAdmin(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<DeleteResult> {
     try {
       return await this.recurringBookingsService.delete(id);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  // Allows user delete only own one-time bookings
+  @Roles(Role.USER)
+  @Delete('recurring/user/:id')
+  async deleteRecurringBookingUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ): Promise<DeleteResult> {
+    try {
+      return await this.recurringBookingsService.deleteOwn(id, req.user.id);
     } catch (error) {
       if (error instanceof ServiceException) {
         throw new HttpException(error.message, 404);
