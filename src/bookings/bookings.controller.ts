@@ -7,7 +7,6 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Post,
-  HttpStatus,
   HttpException,
   Body,
   Param,
@@ -27,7 +26,6 @@ import { CreateRecurringBookingDto } from 'src/recurring-bookings/dto/create-rec
 import { UpdateRecurringBookingDto } from 'src/recurring-bookings/dto/update-recurring-booking.dto';
 import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { RecurringBookingsService } from 'src/recurring-bookings/recurring-bookings.service';
-import { RoomsService } from 'src/rooms/rooms.service';
 import { DeleteResult } from 'typeorm';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './dto/booking.dto';
@@ -43,7 +41,6 @@ export class BookingsController {
   constructor(
     private readonly oneTimeBookingsService: OneTimeBookingsService,
     private readonly recurringBookingsService: RecurringBookingsService,
-    private readonly roomsService: RoomsService,
     private readonly bookingsService: BookingsService,
   ) {}
 

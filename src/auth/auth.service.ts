@@ -28,12 +28,12 @@ export class AuthService {
     return null;
   }
 
-  async login(account: CreateAccountDto): Promise<any> {
+  async login(account: CreateAccountDto): Promise<string> {
     return this.generateToken(account);
   }
 
   // Rework signUp
-  async register(account: CreateAccountDto): Promise<any> {
+  async register(account: CreateAccountDto): Promise<string> {
     const candidate = await this.accountsService.getAccountByEmail(
       account.email,
     );

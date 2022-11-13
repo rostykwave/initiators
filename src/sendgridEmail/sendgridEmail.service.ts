@@ -7,6 +7,9 @@ import { IEmailData } from './interfaces/email.interface';
 @Injectable()
 export class SendgridEmailService {
   private readonly from = this.configService.get<string>('SEND_GRID_EMAIL');
+  private readonly registrationLink = this.configService.get<string>(
+    'INVITE_USER_REGISTRATION_LINK',
+  );
 
   constructor(private readonly configService: ConfigService) {
     SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'));
@@ -17,7 +20,7 @@ export class SendgridEmailService {
       to: email,
       subject: 'Welcome to Incora',
       from: this.from,
-      html: INVITE_USER_EMAIL_HTML(email, password),
+      html: INVITE_USER_EMAIL_HTML(email, password, this.registrationLink),
     };
 
     await SendGrid.send(mail);
