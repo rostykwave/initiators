@@ -35,8 +35,27 @@ export class RecurringBookingsService {
     if (!roomFromQueryData) {
       throw new ServiceException(
         `Room with id ${createRecurringBookingDto.roomId} not found. Try another one.`,
+        404,
       );
     }
+
+    const bookingsAtTheQueryTime =
+      await this.recurringBookingsRepository.findAllByRoomIdInTimeRange(
+        createRecurringBookingDto.roomId,
+        createRecurringBookingDto.startDate,
+        createRecurringBookingDto.endDate,
+        createRecurringBookingDto.startTime,
+        createRecurringBookingDto.endTime,
+        createRecurringBookingDto.daysOfWeek,
+      );
+
+    if (bookingsAtTheQueryTime.length > 0) {
+      throw new ServiceException(
+        `Room with ${createRecurringBookingDto.roomId} will be occupied at the query time. Try another time.`,
+        400,
+      );
+    }
+
     const account = new Account();
     account.id = currentUserId;
 
