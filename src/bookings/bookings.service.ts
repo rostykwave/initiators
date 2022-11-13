@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { parseDateStringWithoutTime } from 'src/helpers/parse-date-string-without-time';
 import { sortBookingsByTimeAndDate } from 'src/one-time-bookings/helpers/sort-bookings-by-time-and-date';
 import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookings.repository';
 import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
@@ -45,8 +46,8 @@ export class BookingsService {
     return {
       data: {
         period: {
-          startDate,
-          endDate,
+          startDate: parseDateStringWithoutTime(startDate),
+          endDate: parseDateStringWithoutTime(endDate),
         },
         bookings: sortedAllBookings,
       },
