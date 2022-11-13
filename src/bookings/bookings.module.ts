@@ -3,13 +3,12 @@ import { OneTimeBookingsModule } from 'src/one-time-bookings/one-time-bookings.m
 import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookings.repository';
 import { RecurringBookingsModule } from 'src/recurring-bookings/recurring-bookings.module';
 import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
-import { RoomsModule } from 'src/rooms/rooms.module';
 import { BookingsController } from './bookings.controller';
 import { BookingsMapper } from './bookings.mapper';
 import { BookingsService } from './bookings.service';
 
 @Module({
-  imports: [OneTimeBookingsModule, RecurringBookingsModule, RoomsModule],
+  imports: [OneTimeBookingsModule, RecurringBookingsModule],
   controllers: [BookingsController],
   providers: [
     BookingsService,
