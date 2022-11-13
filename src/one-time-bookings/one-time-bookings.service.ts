@@ -35,6 +35,22 @@ export class OneTimeBookingsService {
     if (!roomFromQueryData) {
       throw new ServiceException(
         `Room with id ${createOneTimeBookingDto.roomId} not found. Try another one.`,
+        404,
+      );
+    }
+
+    const bookingsAtTheQueryTime =
+      await this.oneTimeBookingsRepository.findAllByRoomIdInTimeRange(
+        createOneTimeBookingDto.roomId,
+        createOneTimeBookingDto.meetingDate,
+        createOneTimeBookingDto.startTime,
+        createOneTimeBookingDto.endTime,
+      );
+
+    if (bookingsAtTheQueryTime.length > 0) {
+      throw new ServiceException(
+        `Room with ${createOneTimeBookingDto.roomId} will be occupied at the query time. Try another time.`,
+        400,
       );
     }
 

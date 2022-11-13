@@ -35,6 +35,21 @@ export class OneTimeBookingsRepository
       .getMany();
   }
 
+  async findAllByRoomIdInTimeRange(
+    roomId: number,
+    meetingDate: Date,
+    startTime: Date,
+    endTime: Date,
+  ): Promise<OneTimeBooking[]> {
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .where('room.id = :roomId', { roomId })
+      .andWhere('oneTimeBookings.meetingDate = :meetingDate', { meetingDate })
+      .andWhere('oneTimeBookings.startTime <= :endTime', { endTime })
+      .andWhere(' oneTimeBookings.endTime >= :startTime', { startTime })
+      .getMany();
+  }
+
   async findAllByOwnerId(ownerId: number): Promise<OneTimeBooking[]> {
     const fromDateString = parseDateStringWithoutTime(new Date());
 
