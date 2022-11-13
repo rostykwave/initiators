@@ -18,13 +18,30 @@ export class OneTimeBookingsRepository
     super(OneTimeBooking, dataSource.createEntityManager());
   }
 
+  async findAllBookingsByOfficeIdInRange(
+    officeId: number,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<OneTimeBooking[]> {
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .leftJoinAndSelect('room.office', 'office')
+      .where('office.id = :officeId', { officeId })
+      .andWhere('oneTimeBookings.meetingDate BETWEEN :from AND :to', {
+        from: startDate,
+        to: endDate,
+      })
+      .orderBy('oneTimeBookings.meetingDate', 'ASC')
+      .getMany();
+  }
+
   async findAllByOwnerId(ownerId: number): Promise<OneTimeBooking[]> {
     const fromDateString = parseDateStringWithoutTime(new Date());
 
     return await this.createQueryBuilder('oneTimeBookings')
       .leftJoinAndSelect('oneTimeBookings.room', 'room')
       .where('oneTimeBookings.owner.id = :ownerId', { ownerId })
-      .where('oneTimeBookings.meetingDate >= :start_at', {
+      .andWhere('oneTimeBookings.meetingDate >= :start_at', {
         start_at: fromDateString,
       })
       .orderBy('oneTimeBookings.meetingDate', 'ASC')

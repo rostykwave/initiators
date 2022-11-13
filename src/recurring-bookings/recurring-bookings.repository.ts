@@ -18,6 +18,21 @@ export class RecurringBookingsRepository
     super(RecurringBooking, dataSource.createEntityManager());
   }
 
+  async findAllBookingsByOfficeIdInRange(
+    officeId: number,
+    endDate: Date,
+  ): Promise<RecurringBooking[]> {
+    return await this.createQueryBuilder('recurringBookings')
+      .leftJoinAndSelect('recurringBookings.room', 'room')
+      .leftJoinAndSelect('room.office', 'office')
+      .where('office.id = :officeId', { officeId })
+      .andWhere('recurringBookings.endDate >= :start_at', {
+        start_at: endDate,
+      })
+      .orderBy('recurringBookings.startDate', 'ASC')
+      .getMany();
+  }
+
   async findAllByOwnerId(ownerId: number): Promise<RecurringBooking[]> {
     const fromDateString = parseDateStringWithoutTime(new Date());
 

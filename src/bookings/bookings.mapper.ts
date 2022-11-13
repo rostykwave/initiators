@@ -66,4 +66,24 @@ export class BookingsMapper {
       return mappedBookings;
     });
   }
+
+  mapRecurringBookingsInRange(
+    recurringBookings: RecurringBooking[],
+    startDate: Date,
+    endDate: Date,
+  ): BookingDto[] {
+    const allMappedRecurringBookings =
+      this.mapRecurringBookings(recurringBookings);
+
+    const inRange = allMappedRecurringBookings.filter((b) => {
+      if (
+        new Date(b.meetingDate).getTime() >= new Date(startDate).getTime() &&
+        new Date(b.meetingDate).getTime() <= new Date(endDate).getTime()
+      ) {
+        return b;
+      }
+    });
+
+    return inRange;
+  }
 }

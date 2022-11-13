@@ -4,6 +4,7 @@ import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookin
 import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
 import { BookingsMapper } from './bookings.mapper';
 import { BookingDto } from './dto/booking.dto';
+import { IBookingsInRange } from './interfaces/bookings-in-range.interface';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Injectable()
@@ -13,6 +14,44 @@ export class BookingsService {
     private readonly recurringBookingsRepository: RecurringBookingsRepository,
     private readonly bookingsMapper: BookingsMapper,
   ) {}
+
+  async findAllBookingsByOfficeIdInRange(
+    officeId: number,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<IBookingsInRange<BookingDto>> {
+    const allOneTimeBookings =
+      await this.oneTimeBookingsRepository.findAllBookingsByOfficeIdInRange(
+        officeId,
+        startDate,
+        endDate,
+      );
+    const allRecurringTimeBookings =
+      await this.recurringBookingsRepository.findAllBookingsByOfficeIdInRange(
+        officeId,
+        startDate,
+      );
+
+    const allBookings = [
+      ...this.bookingsMapper.mapOneTimeBookings(allOneTimeBookings),
+      ...this.bookingsMapper.mapRecurringBookingsInRange(
+        allRecurringTimeBookings,
+        startDate,
+        endDate,
+      ),
+    ];
+    const sortedAllBookings = sortBookingsByTimeAndDate(allBookings);
+
+    return {
+      data: {
+        period: {
+          startDate,
+          endDate,
+        },
+        bookings: sortedAllBookings,
+      },
+    };
+  }
 
   async findAllOwnBookings(
     ownerId: number,
@@ -37,10 +76,12 @@ export class BookingsService {
     );
 
     return {
-      bookings: paginatedAndSortedAllBookings,
-      page,
-      limit,
-      totalCount: sortedAllBookings.length,
+      data: {
+        bookings: paginatedAndSortedAllBookings,
+        page,
+        limit,
+        totalCount: sortedAllBookings.length,
+      },
     };
   }
 }

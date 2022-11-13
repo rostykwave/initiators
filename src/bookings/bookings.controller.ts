@@ -31,7 +31,9 @@ import { RoomsService } from 'src/rooms/rooms.service';
 import { DeleteResult } from 'typeorm';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './dto/booking.dto';
+import { findAllBookingsByOfficeIdInRangeDto } from './dto/find-all-bookings-by-office-id-in-range.dto';
 import { ServiceException } from './exceptions/service.exception';
+import { IBookingsInRange } from './interfaces/bookings-in-range.interface';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
 
 @Controller('bookings')
@@ -44,6 +46,18 @@ export class BookingsController {
     private readonly roomsService: RoomsService,
     private readonly bookingsService: BookingsService,
   ) {}
+
+  @Get('/')
+  async findAllBookingsByOfficeIdInRange(
+    @Query()
+    { officeId, startDate, endDate }: findAllBookingsByOfficeIdInRangeDto,
+  ): Promise<IBookingsInRange<BookingDto>> {
+    return this.bookingsService.findAllBookingsByOfficeIdInRange(
+      officeId,
+      startDate,
+      endDate,
+    );
+  }
 
   @Get('own')
   async findAllOwnBookings(
@@ -104,20 +118,18 @@ export class BookingsController {
     @Body() createRecurringBookingDto: CreateRecurringBookingDto,
     @Request() req,
   ): Promise<RecurringBooking> {
-    const doesRoomExists = await this.roomsService.findOneRoom(
-      createRecurringBookingDto.roomId,
-    );
-
-    if (!doesRoomExists) {
-      throw new HttpException(
-        `Room with id ${createRecurringBookingDto.roomId} not found. Try another one.`,
-        HttpStatus.NOT_FOUND,
+    try {
+      return await this.recurringBookingsService.create(
+        createRecurringBookingDto,
+        req.user.id,
       );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, 404);
+      } else {
+        throw error;
+      }
     }
-    return this.recurringBookingsService.create(
-      createRecurringBookingDto,
-      req.user.id,
-    );
   }
 
   // Allows admin update all one-time bookings
