@@ -17,8 +17,8 @@ export class BookingsService {
 
   async findAllBookingsByOfficeIdInRange(
     officeId: number,
-    startDate: string,
-    endDate: string,
+    startDate: Date,
+    endDate: Date,
   ): Promise<IBookingsInRange<BookingDto>> {
     const allOneTimeBookings =
       await this.oneTimeBookingsRepository.findAllBookingsByOfficeIdInRange(

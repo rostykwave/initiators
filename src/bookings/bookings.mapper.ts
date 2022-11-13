@@ -69,8 +69,8 @@ export class BookingsMapper {
 
   mapRecurringBookingsInRange(
     recurringBookings: RecurringBooking[],
-    startDate: string,
-    endDate: string,
+    startDate: Date,
+    endDate: Date,
   ): BookingDto[] {
     const allMappedRecurringBookings =
       this.mapRecurringBookings(recurringBookings);

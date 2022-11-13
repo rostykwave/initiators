@@ -20,7 +20,7 @@ export class RecurringBookingsRepository
 
   async findAllBookingsByOfficeIdInRange(
     officeId: number,
-    endDate: string,
+    endDate: Date,
   ): Promise<RecurringBooking[]> {
     return await this.createQueryBuilder('recurringBookings')
       .leftJoinAndSelect('recurringBookings.room', 'room')

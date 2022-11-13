@@ -25,6 +25,7 @@ import { RecurringBookingsService } from 'src/recurring-bookings/recurring-booki
 import { RoomsService } from 'src/rooms/rooms.service';
 import { BookingsService } from './bookings.service';
 import { BookingDto } from './dto/booking.dto';
+import { findAllBookingsByOfficeIdInRangeDto } from './dto/find-all-bookings-by-office-id-in-range.dto';
 import { ServiceException } from './exceptions/service.exception';
 import { IBookingsInRange } from './interfaces/bookings-in-range.interface';
 import { IBookingsPagination } from './interfaces/bookings-pagination.interface';
@@ -42,9 +43,8 @@ export class BookingsController {
 
   @Get('/')
   async findAllBookingsByOfficeIdInRange(
-    @Query('officeId', new DefaultValuePipe(1), ParseIntPipe) officeId: number,
-    @Query('startDate') startDate: string,
-    @Query('endDate') endDate: string,
+    @Query()
+    { officeId, startDate, endDate }: findAllBookingsByOfficeIdInRangeDto,
   ): Promise<IBookingsInRange<BookingDto>> {
     return this.bookingsService.findAllBookingsByOfficeIdInRange(
       officeId,

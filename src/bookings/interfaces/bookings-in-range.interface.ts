@@ -1,8 +1,8 @@
 export interface IBookingsInRange<T> {
   data: {
     period: {
-      startDate: string;
-      endDate: string;
+      startDate: Date;
+      endDate: Date;
     };
     readonly bookings: T[];
   };

@@ -20,8 +20,8 @@ export class OneTimeBookingsRepository
 
   async findAllBookingsByOfficeIdInRange(
     officeId: number,
-    startDate: string,
-    endDate: string,
+    startDate: Date,
+    endDate: Date,
   ): Promise<OneTimeBooking[]> {
     return await this.createQueryBuilder('oneTimeBookings')
       .leftJoinAndSelect('oneTimeBookings.room', 'room')
