@@ -58,7 +58,7 @@ export class BookingsService {
     ownerId: number,
     page: number,
     limit: number,
-  ): Promise<IBookingsPagination<BookingDto>> {
+  ) /*: Promise<IBookingsPagination<BookingDto>>*/ {
     const allOwnOneTimeBookings =
       await this.oneTimeBookingsRepository.findAllByOwnerId(ownerId);
 
