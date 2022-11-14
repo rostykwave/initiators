@@ -43,39 +43,6 @@ export class OneTimeBookingsService {
       );
     }
 
-    const bookingsAtTheQueryTime =
-      await this.oneTimeBookingsRepository.findAllByRoomIdInRange(
-        createOneTimeBookingDto.roomId,
-        createOneTimeBookingDto.meetingDate,
-        createOneTimeBookingDto.startTime,
-        createOneTimeBookingDto.endTime,
-      );
-
-    if (bookingsAtTheQueryTime.length > 0) {
-      throw new ServiceException(
-        `Room with ${createOneTimeBookingDto.roomId} will be occupied by another one-time meeting at the query time. Try another time.`,
-        400,
-      );
-    }
-
-    const recurringBookingsAtTheQueryTime =
-      await this.recurringBookingsRepository.findAllByRoomIdAndMeetingDateInRange(
-        createOneTimeBookingDto.roomId,
-        createOneTimeBookingDto.meetingDate,
-        createOneTimeBookingDto.startTime,
-        createOneTimeBookingDto.endTime,
-      );
-    const recurringBookingsAtThatMeetingDate = this.bookingsMapper
-      .mapRecurringBookings(recurringBookingsAtTheQueryTime)
-      .filter((a) => a.meetingDate === createOneTimeBookingDto.meetingDate);
-
-    if (recurringBookingsAtThatMeetingDate.length > 0) {
-      throw new ServiceException(
-        `Room with ${createOneTimeBookingDto.roomId} will be occupied by recurring meeting at the query time. Try another time.`,
-        400,
-      );
-    }
-
     const account = new Account();
     account.id = currentUserId;
 
@@ -90,6 +57,20 @@ export class OneTimeBookingsService {
       room,
       owner: account,
     });
+
+    /////checkAvaliabilityOfRoomForSpecificTime
+    try {
+      await this.checkAvaliabilityOfRoomForSpecificTime(
+        createOneTimeBookingDto,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //////////////////////
 
     return this.oneTimeBookingsRepository.save(newOneTimeBooking);
   }
@@ -193,5 +174,42 @@ export class OneTimeBookingsService {
     }
 
     return this.oneTimeBookingsRepository.delete(id);
+  }
+
+  async checkAvaliabilityOfRoomForSpecificTime(
+    createOneTimeBookingDto: CreateOneTimeBookingDto,
+  ): Promise<any> {
+    const bookingsAtTheQueryTime =
+      await this.oneTimeBookingsRepository.findAllByRoomIdInRange(
+        createOneTimeBookingDto.roomId,
+        createOneTimeBookingDto.meetingDate,
+        createOneTimeBookingDto.startTime,
+        createOneTimeBookingDto.endTime,
+      );
+
+    if (bookingsAtTheQueryTime.length > 0) {
+      throw new ServiceException(
+        `Room with ${createOneTimeBookingDto.roomId} will be occupied by another one-time meeting at the query time. Try another time.`,
+        400,
+      );
+    }
+
+    const recurringBookingsAtTheQueryTime =
+      await this.recurringBookingsRepository.findAllByRoomIdAndMeetingDateInRange(
+        createOneTimeBookingDto.roomId,
+        createOneTimeBookingDto.meetingDate,
+        createOneTimeBookingDto.startTime,
+        createOneTimeBookingDto.endTime,
+      );
+    const recurringBookingsAtThatMeetingDate = this.bookingsMapper
+      .mapRecurringBookings(recurringBookingsAtTheQueryTime)
+      .filter((a) => a.meetingDate === createOneTimeBookingDto.meetingDate);
+
+    if (recurringBookingsAtThatMeetingDate.length > 0) {
+      throw new ServiceException(
+        `Room with ${createOneTimeBookingDto.roomId} will be occupied by recurring meeting at the query time. Try another time.`,
+        400,
+      );
+    }
   }
 }
