@@ -35,7 +35,7 @@ export class OneTimeBookingsRepository
       .getMany();
   }
 
-  async findAllByRoomIdInTimeRange(
+  async findAllByRoomIdInRange(
     roomId: number,
     meetingDate: Date,
     startTime: Date,
@@ -45,8 +45,25 @@ export class OneTimeBookingsRepository
       .leftJoinAndSelect('oneTimeBookings.room', 'room')
       .where('room.id = :roomId', { roomId })
       .andWhere('oneTimeBookings.meetingDate = :meetingDate', { meetingDate })
-      .andWhere('oneTimeBookings.startTime <= :endTime', { endTime })
-      .andWhere(' oneTimeBookings.endTime >= :startTime', { startTime })
+      .andWhere('oneTimeBookings.startTime < :endTime', { endTime })
+      .andWhere(' oneTimeBookings.endTime > :startTime', { startTime })
+      .getMany();
+  }
+
+  async findAllByRoomIdAndDatesInRange(
+    roomId: number,
+    startDate: Date,
+    endDate: Date,
+    startTime: Date,
+    endTime: Date,
+  ): Promise<OneTimeBooking[]> {
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .where('room.id = :roomId', { roomId })
+      .andWhere('oneTimeBookings.meetingDate >= :startDate', { startDate })
+      .andWhere('oneTimeBookings.meetingDate <= :endDate', { endDate })
+      .andWhere('oneTimeBookings.startTime < :endTime', { endTime })
+      .andWhere(' oneTimeBookings.endTime > :startTime', { startTime })
       .getMany();
   }
 

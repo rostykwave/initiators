@@ -33,7 +33,7 @@ export class RecurringBookingsRepository
       .getMany();
   }
 
-  async findAllByRoomIdInTimeRange(
+  async findAllByRoomIdInRange(
     roomId: number,
     startDate: Date,
     endDate: Date,
@@ -48,9 +48,25 @@ export class RecurringBookingsRepository
       .andWhere('recurringBookings.startDate <= :endDate', { endDate })
       .andWhere('recurringBookings.endDate <= :endDate', { endDate })
       .andWhere('recurringBookings.endDate > :startDate', { startDate })
-      .andWhere('recurringBookings.startTime <= :endTime', { endTime })
-      .andWhere(' recurringBookings.endTime >= :startTime', { startTime })
+      .andWhere('recurringBookings.startTime < :endTime', { endTime })
+      .andWhere(' recurringBookings.endTime > :startTime', { startTime })
       .andWhere(' recurringBookings.daysOfWeek && :daysOfWeek', { daysOfWeek })
+      .getMany();
+  }
+
+  async findAllByRoomIdAndMeetingDateInRange(
+    roomId: number,
+    meetingDate: Date,
+    startTime: Date,
+    endTime: Date,
+  ): Promise<RecurringBooking[]> {
+    return await this.createQueryBuilder('recurringBookings')
+      .leftJoinAndSelect('recurringBookings.room', 'room')
+      .where('room.id = :roomId', { roomId })
+      .andWhere('recurringBookings.startDate <= :meetingDate', { meetingDate })
+      .andWhere('recurringBookings.endDate >= :meetingDate', { meetingDate })
+      .andWhere('recurringBookings.startTime < :endTime', { endTime })
+      .andWhere(' recurringBookings.endTime > :startTime', { startTime })
       .getMany();
   }
 

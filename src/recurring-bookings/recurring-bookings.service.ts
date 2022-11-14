@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
+import { BookingsMapper } from 'src/bookings/bookings.mapper';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
+import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookings.repository';
 import { Room } from 'src/rooms/room.entity';
 import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { DeleteResult } from 'typeorm';
@@ -14,7 +16,9 @@ import { RecurringBookingsRepository } from './recurring-bookings.repository';
 export class RecurringBookingsService {
   constructor(
     private readonly recurringBookingsRepository: RecurringBookingsRepository,
+    private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
     private readonly roomsRepository: RoomsRepository,
+    private readonly bookingsMapper: BookingsMapper,
   ) {}
 
   async findAllPaginate(
@@ -39,29 +43,10 @@ export class RecurringBookingsService {
       );
     }
 
-    const bookingsAtTheQueryTime =
-      await this.recurringBookingsRepository.findAllByRoomIdInTimeRange(
-        createRecurringBookingDto.roomId,
-        createRecurringBookingDto.startDate,
-        createRecurringBookingDto.endDate,
-        createRecurringBookingDto.startTime,
-        createRecurringBookingDto.endTime,
-        createRecurringBookingDto.daysOfWeek,
-      );
-
-    if (bookingsAtTheQueryTime.length > 0) {
-      throw new ServiceException(
-        `Room with ${createRecurringBookingDto.roomId} will be occupied at the query time. Try another time.`,
-        400,
-      );
-    }
-
     const account = new Account();
     account.id = currentUserId;
-
     const room = new Room();
     room.id = createRecurringBookingDto.roomId;
-
     const newRecurringBooking = this.recurringBookingsRepository.create({
       createdAt: new Date(),
       startDate: createRecurringBookingDto.startDate,
@@ -72,6 +57,48 @@ export class RecurringBookingsService {
       room,
       owner: account,
     });
+
+    const recurringBbookingsAtTheQueryTime =
+      await this.recurringBookingsRepository.findAllByRoomIdInRange(
+        createRecurringBookingDto.roomId,
+        createRecurringBookingDto.startDate,
+        createRecurringBookingDto.endDate,
+        createRecurringBookingDto.startTime,
+        createRecurringBookingDto.endTime,
+        createRecurringBookingDto.daysOfWeek,
+      );
+
+    if (recurringBbookingsAtTheQueryTime.length > 0) {
+      throw new ServiceException(
+        `Room with ${createRecurringBookingDto.roomId} will be occupied by another recurring meeting at the query time. Try another time.`,
+        400,
+      );
+    }
+
+    const oneTimeBookingsAtTheQueryTimePool =
+      await this.oneTimeBookingsRepository.findAllByRoomIdAndDatesInRange(
+        createRecurringBookingDto.roomId,
+        createRecurringBookingDto.startDate,
+        createRecurringBookingDto.endDate,
+        createRecurringBookingDto.startTime,
+        createRecurringBookingDto.endTime,
+      );
+    const newBookingsMapped = this.bookingsMapper.mapRecurringBookings([
+      newRecurringBooking,
+    ]);
+
+    const oneTimeBookingsAtTheQueryTime = newBookingsMapped.flatMap((b) => {
+      return oneTimeBookingsAtTheQueryTimePool.filter(
+        (a) => a.meetingDate === b.meetingDate,
+      );
+    });
+
+    if (oneTimeBookingsAtTheQueryTime.length > 0) {
+      throw new ServiceException(
+        `Room with ${createRecurringBookingDto.roomId} will be occupied by one-time meeting at the query time. Try another time.`,
+        400,
+      );
+    }
 
     return this.recurringBookingsRepository.save(newRecurringBooking);
   }

@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
+import { BookingsMapper } from 'src/bookings/bookings.mapper';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
+import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
 import { Room } from 'src/rooms/room.entity';
 import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { DeleteResult } from 'typeorm';
@@ -14,7 +16,9 @@ import { OneTimeBookingsRepository } from './one-time-bookings.repository';
 export class OneTimeBookingsService {
   constructor(
     private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
+    private readonly recurringBookingsRepository: RecurringBookingsRepository,
     private readonly roomsRepository: RoomsRepository,
+    private readonly bookingsMapper: BookingsMapper,
   ) {}
 
   async findAllPaginate(
@@ -40,7 +44,7 @@ export class OneTimeBookingsService {
     }
 
     const bookingsAtTheQueryTime =
-      await this.oneTimeBookingsRepository.findAllByRoomIdInTimeRange(
+      await this.oneTimeBookingsRepository.findAllByRoomIdInRange(
         createOneTimeBookingDto.roomId,
         createOneTimeBookingDto.meetingDate,
         createOneTimeBookingDto.startTime,
@@ -49,7 +53,25 @@ export class OneTimeBookingsService {
 
     if (bookingsAtTheQueryTime.length > 0) {
       throw new ServiceException(
-        `Room with ${createOneTimeBookingDto.roomId} will be occupied at the query time. Try another time.`,
+        `Room with ${createOneTimeBookingDto.roomId} will be occupied by another one-time meeting at the query time. Try another time.`,
+        400,
+      );
+    }
+
+    const recurringBookingsAtTheQueryTime =
+      await this.recurringBookingsRepository.findAllByRoomIdAndMeetingDateInRange(
+        createOneTimeBookingDto.roomId,
+        createOneTimeBookingDto.meetingDate,
+        createOneTimeBookingDto.startTime,
+        createOneTimeBookingDto.endTime,
+      );
+    const recurringBookingsAtThatMeetingDate = this.bookingsMapper
+      .mapRecurringBookings(recurringBookingsAtTheQueryTime)
+      .filter((a) => a.meetingDate === createOneTimeBookingDto.meetingDate);
+
+    if (recurringBookingsAtThatMeetingDate.length > 0) {
+      throw new ServiceException(
+        `Room with ${createOneTimeBookingDto.roomId} will be occupied by recurring meeting at the query time. Try another time.`,
         400,
       );
     }
