@@ -155,7 +155,7 @@ export class OneTimeBookingsService {
     id: number,
     currentUserId: number,
     updateOneTimeBookingDto: UpdateOneTimeBookingDto,
-  ) {
+  ): Promise<OneTimeBooking> {
     // Check if booking exists
     const oneTimeBookingToUpdate =
       await this.oneTimeBookingsRepository.findOneBy({ id });
@@ -180,6 +180,7 @@ export class OneTimeBookingsService {
     return this.update(id, updateOneTimeBookingDto);
   }
 
+  // Delete for Admin
   async delete(id: number): Promise<DeleteResult> {
     const oneTimeBookingToDelete =
       await this.oneTimeBookingsRepository.findOneBy({ id });
@@ -190,9 +191,11 @@ export class OneTimeBookingsService {
       );
     }
 
+    await this.guestsService.deleteGuestsByOneTimeBookingId(id);
     return this.oneTimeBookingsRepository.delete(id);
   }
 
+  // Delete for User
   async deleteOwn(id: number, currentUserId: number): Promise<DeleteResult> {
     // Check if booking exists
     const oneTimeBookingToDelete =
@@ -215,6 +218,7 @@ export class OneTimeBookingsService {
       throw new ServiceException(`You can delete only own booking.`);
     }
 
+    await this.guestsService.deleteGuestsByOneTimeBookingId(id);
     return this.oneTimeBookingsRepository.delete(id);
   }
 }

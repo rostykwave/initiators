@@ -94,4 +94,14 @@ export class GuestsService {
       oneTimeBookingId,
     );
   }
+
+  async deleteGuestsByOneTimeBookingId(oneTimeBookingId: number) {
+    const guests = await this.guestsRepository.findAllByOneTimeBookingId(
+      oneTimeBookingId,
+    );
+    // delete data about guests
+    guests.forEach(async (guest) => {
+      await this.guestsRepository.delete(guest.id);
+    });
+  }
 }
