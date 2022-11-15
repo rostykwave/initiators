@@ -66,4 +66,11 @@ export class OneTimeBookingsRepository
       .getOne();
     return booking;
   }
+
+  async findOneTimeBookingWithOwner(id: number): Promise<OneTimeBooking> {
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.owner', 'account')
+      .where('oneTimeBookings.id = :id', { id })
+      .getOne();
+  }
 }

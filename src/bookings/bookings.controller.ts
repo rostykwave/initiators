@@ -18,6 +18,7 @@ import { Role } from 'src/accounts/account.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { GuestsService } from 'src/guests/guests.service';
 import { CreateOneTimeBookingDto } from 'src/one-time-bookings/dto/create-one-time-booking.dto';
 import { UpdateOneTimeBookingDto } from 'src/one-time-bookings/dto/update-one-time-booking.dto';
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';

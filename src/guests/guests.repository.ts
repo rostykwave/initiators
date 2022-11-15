@@ -7,4 +7,11 @@ export class GuestsRepository extends Repository<Guest> /*implements IGuestsRepo
   constructor(private dataSource: DataSource) {
     super(Guest, dataSource.createEntityManager());
   }
+
+  async findAllByOneTimeBookingId(id: number) {
+    const guests = await this.createQueryBuilder('guests')
+      .where('guests.oneTimeBookingId = :id', { id })
+      .getMany();
+    return guests;
+  }
 }
