@@ -130,14 +130,21 @@ export class BookingsController {
     }
   }
 
-  // Allows admin update all one-time bookings
-  @Roles(Role.ADMIN)
-  @Put('one-time/admin/:id')
-  async updateOneTimeBookingAdmin(
+  // Allows user updates only own one-time bookings and admin all one-time bookings
+  @Put('one-time/:id')
+  async updateOneTimeBooking(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateOneTimeBookingDto: UpdateOneTimeBookingDto,
+    @Request() req,
   ): Promise<OneTimeBooking> {
     try {
+      if (req.user.role !== Role.ADMIN) {
+        return await this.oneTimeBookingsService.updateOwn(
+          id,
+          req.user.id,
+          updateOneTimeBookingDto,
+        );
+      }
       return await this.oneTimeBookingsService.update(
         id,
         updateOneTimeBookingDto,
@@ -151,55 +158,17 @@ export class BookingsController {
     }
   }
 
-  // Allows user update only own one-time bookings
-  @Roles(Role.USER)
-  @Put('one-time/user/:id')
-  async updateOneTimeBookingUser(
+  // Allows user deletes only own one-time bookings and admin all one-time bookings
+  @Delete('one-time/:id')
+  async deleteOneTimeBooking(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateOneTimeBookingDto: UpdateOneTimeBookingDto,
     @Request() req,
-  ): Promise<OneTimeBooking> {
-    try {
-      return await this.oneTimeBookingsService.updateOwn(
-        id,
-        req.user.id,
-        updateOneTimeBookingDto,
-      );
-    } catch (error) {
-      if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  // Allows admin delete all one-time bookings
-  @Roles(Role.ADMIN)
-  @Delete('one-time/admin/:id')
-  async deleteOneTimeBookingAdmin(
-    @Param('id', ParseIntPipe) id: number,
   ): Promise<DeleteResult> {
     try {
+      if (req.user.role !== Role.ADMIN) {
+        return await this.oneTimeBookingsService.deleteOwn(id, req.user.id);
+      }
       return await this.oneTimeBookingsService.delete(id);
-    } catch (error) {
-      if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  // Allows user delete only own one-time bookings
-  @Roles(Role.USER)
-  @Delete('one-time/user/:id')
-  async deleteOneTimeBookingUser(
-    @Param('id', ParseIntPipe) id: number,
-    @Request() req,
-  ): Promise<DeleteResult> {
-    try {
-      return await this.oneTimeBookingsService.deleteOwn(id, req.user.id);
     } catch (error) {
       if (error instanceof ServiceException) {
         throw new HttpException(error.message, 404);

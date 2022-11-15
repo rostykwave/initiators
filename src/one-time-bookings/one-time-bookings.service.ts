@@ -106,6 +106,11 @@ export class OneTimeBookingsService {
   ): Promise<OneTimeBooking> {
     const booking =
       await this.oneTimeBookingsRepository.findOneTimeBookingWithOwner(id);
+    if (!booking) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
     const ownerId = booking.owner.id;
 
     // Make sure guests emails are unique
