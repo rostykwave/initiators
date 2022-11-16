@@ -121,4 +121,14 @@ export class GuestsService {
       await this.guestsRepository.delete(guest.id);
     });
   }
+
+  async deleteGuestsByRecurringBookingId(recurringBookingId: number) {
+    const guests = await this.guestsRepository.findAllByRecurringBookingId(
+      recurringBookingId,
+    );
+    // delete data about guests
+    guests.forEach(async (guest) => {
+      await this.guestsRepository.delete(guest.id);
+    });
+  }
 }

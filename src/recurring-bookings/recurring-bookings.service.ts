@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
@@ -190,6 +190,7 @@ export class RecurringBookingsService {
     return this.update(id, updateRecurringBookingDto);
   }
 
+  // Delete for Admin
   async delete(id: number): Promise<DeleteResult> {
     const recurringBookingToDelete =
       await this.recurringBookingsRepository.findOneBy({ id });
@@ -200,9 +201,11 @@ export class RecurringBookingsService {
       );
     }
 
+    await this.guestsService.deleteGuestsByRecurringBookingId(id);
     return this.recurringBookingsRepository.delete(id);
   }
 
+  // Delete for User
   async deleteOwn(id: number, currentUserId: number): Promise<DeleteResult> {
     // Check if booking exists
     const recurringBookingToDelete =
@@ -225,6 +228,7 @@ export class RecurringBookingsService {
       throw new ServiceException(`You can delete only own booking.`);
     }
 
+    await this.guestsService.deleteGuestsByRecurringBookingId(id);
     return this.recurringBookingsRepository.delete(id);
   }
 }
