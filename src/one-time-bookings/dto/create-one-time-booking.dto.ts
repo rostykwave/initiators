@@ -5,6 +5,7 @@ import {
   IsMilitaryTime,
   Validate,
   IsArray,
+  ArrayMinSize,
 } from 'class-validator';
 import { IsBeforeConstraint } from 'src/recurring-bookings/dto/custom-validation-classes/IsBeforeConstraint';
 
@@ -26,5 +27,6 @@ export class CreateOneTimeBookingDto {
   // Array of emails
   // Users that invited on current booking
   @IsArray()
+  @ArrayMinSize(1)
   guests: string[];
 }

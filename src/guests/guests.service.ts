@@ -92,6 +92,26 @@ export class GuestsService {
     });
   }
 
+  async updateGuestsByRecurringBookingId(
+    emails: string[],
+    currentUserId: number,
+    recurringBookingId: number,
+  ) {
+    const guests = await this.guestsRepository.findAllByRecurringBookingId(
+      recurringBookingId,
+    );
+    // delete old data about guests
+    guests.forEach(async (guest) => {
+      await this.guestsRepository.delete(guest.id);
+    });
+    // create new data about guests
+    return await this.createGuestsByEmails({
+      emails,
+      currentUserId,
+      recurringBookingId,
+    });
+  }
+
   async deleteGuestsByOneTimeBookingId(oneTimeBookingId: number) {
     const guests = await this.guestsRepository.findAllByOneTimeBookingId(
       oneTimeBookingId,

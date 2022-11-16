@@ -7,6 +7,7 @@ import {
   ArrayUnique,
   Validate,
   IsArray,
+  ArrayMinSize,
 } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
 import { IsBeforeConstraint } from './custom-validation-classes/IsBeforeConstraint';
@@ -39,5 +40,6 @@ export class UpdateRecurringBookingDto {
   // Array of emails
   // Users that invited on current booking
   @IsArray()
+  @ArrayMinSize(1)
   guests: string[];
 }

@@ -158,34 +158,21 @@ export class BookingsController {
     }
   }
 
-  // Allows user deletes only own one-time bookings and admin all one-time bookings
-  @Delete('one-time/:id')
-  async deleteOneTimeBooking(
-    @Param('id', ParseIntPipe) id: number,
-    @Request() req,
-  ): Promise<DeleteResult> {
-    try {
-      if (req.user.role !== Role.ADMIN) {
-        return await this.oneTimeBookingsService.deleteOwn(id, req.user.id);
-      }
-      return await this.oneTimeBookingsService.delete(id);
-    } catch (error) {
-      if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  // Allows admin update all recurring bookings
-  @Roles(Role.ADMIN)
-  @Put('recurring/admin/:id')
+  // Allows user updates only own recurring bookings and admin all recurring bookings
+  @Put('recurring/:id')
   async updateRecurringBookingAdmin(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateRecurringBookingDto: UpdateRecurringBookingDto,
+    @Request() req,
   ): Promise<RecurringBooking> {
     try {
+      if (req.user.role !== Role.ADMIN) {
+        return await this.recurringBookingsService.updateOwn(
+          id,
+          req.user.id,
+          updateRecurringBookingDto,
+        );
+      }
       return await this.recurringBookingsService.update(
         id,
         updateRecurringBookingDto,
@@ -199,20 +186,17 @@ export class BookingsController {
     }
   }
 
-  // Allows user update only own recurring bookings
-  @Roles(Role.USER)
-  @Put('recurring/user/:id')
-  async updateRecurringBookingUser(
+  // Allows user deletes only own one-time bookings and admin all one-time bookings
+  @Delete('one-time/:id')
+  async deleteOneTimeBooking(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateRecurringBookingDto: UpdateRecurringBookingDto,
     @Request() req,
-  ): Promise<RecurringBooking> {
+  ): Promise<DeleteResult> {
     try {
-      return await this.recurringBookingsService.updateOwn(
-        id,
-        req.user.id,
-        updateRecurringBookingDto,
-      );
+      if (req.user.role !== Role.ADMIN) {
+        return await this.oneTimeBookingsService.deleteOwn(id, req.user.id);
+      }
+      return await this.oneTimeBookingsService.delete(id);
     } catch (error) {
       if (error instanceof ServiceException) {
         throw new HttpException(error.message, 404);

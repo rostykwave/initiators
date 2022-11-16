@@ -59,7 +59,10 @@ export class OneTimeBookingsRepository
     return paginate<OneTimeBooking>(allOneTimeBookings, options);
   }
 
-  async findOneByIdAndOwnerId(id: number, ownerId: number) {
+  async findOneByIdAndOwnerId(
+    id: number,
+    ownerId: number,
+  ): Promise<OneTimeBooking> {
     const booking = await this.createQueryBuilder('oneTimeBookings')
       .where('oneTimeBookings.id = :id', { id })
       .andWhere('oneTimeBookings.owner.id = :ownerId', { ownerId })

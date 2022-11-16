@@ -100,10 +100,34 @@ export class RecurringBookingsService {
     }
   }
 
+  // Update for Admin
   async update(
     id: number,
     updateRecurringBookingDto: UpdateRecurringBookingDto,
   ): Promise<RecurringBooking> {
+    const booking =
+      await this.recurringBookingsRepository.findRecurringBookingWithOwner(id);
+    if (!booking) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+    const ownerId = booking.owner.id;
+
+    console.log('Owner id: ', ownerId);
+
+    // Make sure guests emails are unique
+    const emails = updateRecurringBookingDto.guests;
+    const uniqueEmails = [...new Set(emails)];
+
+    await this.checkEmails(uniqueEmails, ownerId);
+
+    await this.guestsService.updateGuestsByRecurringBookingId(
+      uniqueEmails,
+      ownerId,
+      id,
+    );
+
     const recurringBookingToUpdate =
       await this.recurringBookingsRepository.findOneBy({ id });
 
@@ -136,11 +160,12 @@ export class RecurringBookingsService {
     return this.recurringBookingsRepository.save(recurringBookingToUpdate);
   }
 
+  // Update for User
   async updateOwn(
     id: number,
     currentUserId: number,
     updateRecurringBookingDto: UpdateRecurringBookingDto,
-  ) {
+  ): Promise<RecurringBooking> {
     // Check if booking exists
     const recurringBookingToUpdate =
       await this.recurringBookingsRepository.findOneBy({ id });
