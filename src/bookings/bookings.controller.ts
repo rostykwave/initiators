@@ -18,7 +18,6 @@ import { Role } from 'src/accounts/account.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { GuestsService } from 'src/guests/guests.service';
 import { CreateOneTimeBookingDto } from 'src/one-time-bookings/dto/create-one-time-booking.dto';
 import { UpdateOneTimeBookingDto } from 'src/one-time-bookings/dto/update-one-time-booking.dto';
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
@@ -206,32 +205,17 @@ export class BookingsController {
     }
   }
 
-  // Allows admin delete all recurring bookings
-  @Roles(Role.ADMIN)
-  @Delete('recurring/admin/:id')
-  async deleteRecurringBookingAdmin(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<DeleteResult> {
-    try {
-      return await this.recurringBookingsService.delete(id);
-    } catch (error) {
-      if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  // Allows user delete only own one-time bookings
-  @Roles(Role.USER)
-  @Delete('recurring/user/:id')
-  async deleteRecurringBookingUser(
+  // Allows user deletes only own recurring bookings and admin all recurring bookings
+  @Delete('recurring/:id')
+  async deleteRecurringBooking(
     @Param('id', ParseIntPipe) id: number,
     @Request() req,
   ): Promise<DeleteResult> {
     try {
-      return await this.recurringBookingsService.deleteOwn(id, req.user.id);
+      if (req.user.role !== Role.ADMIN) {
+        return await this.recurringBookingsService.deleteOwn(id, req.user.id);
+      }
+      return await this.recurringBookingsService.delete(id);
     } catch (error) {
       if (error instanceof ServiceException) {
         throw new HttpException(error.message, 404);
