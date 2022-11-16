@@ -6,7 +6,7 @@ import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
 import { RecurringBooking } from 'src/recurring-bookings/recurring-booking.entity';
 import { Guest } from './guest.entity';
 import { GuestsRepository } from './guests.repository';
-
+import { GuestType } from './types/guest.type';
 @Injectable()
 export class GuestsService {
   constructor(
@@ -14,12 +14,9 @@ export class GuestsService {
     private readonly accountsService: AccountsService,
   ) {}
 
-  async createGuestsByEmails(
-    emails: string[],
-    currentUserId: number,
-    oneTimeBookingId?: number,
-    recurringBookingId?: number,
-  ) {
+  async createGuestsByEmails(guest: GuestType) {
+    const { emails, currentUserId, oneTimeBookingId, recurringBookingId } =
+      guest;
     const guests = emails.map(
       async (email) =>
         await this.createGuestByEmail(
@@ -88,11 +85,11 @@ export class GuestsService {
       await this.guestsRepository.delete(guest.id);
     });
     // create new data about guests
-    return await this.createGuestsByEmails(
+    return await this.createGuestsByEmails({
       emails,
       currentUserId,
       oneTimeBookingId,
-    );
+    });
   }
 
   async deleteGuestsByOneTimeBookingId(oneTimeBookingId: number) {

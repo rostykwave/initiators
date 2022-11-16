@@ -67,11 +67,11 @@ export class OneTimeBookingsService {
       newOneTimeBooking,
     );
 
-    const guests = await this.guestsService.createGuestsByEmails(
-      uniqueEmails,
+    const guests = await this.guestsService.createGuestsByEmails({
+      emails: uniqueEmails,
       currentUserId,
-      booking.id,
-    );
+      oneTimeBookingId: booking.id,
+    });
 
     return booking;
   }
