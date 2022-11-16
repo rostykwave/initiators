@@ -59,11 +59,21 @@ export class RecurringBookingsRepository
     return paginate<RecurringBooking>(allRecurringBookings, options);
   }
 
-  async findOneByIdAndOwnerId(id: number, ownerId: number) {
+  async findOneByIdAndOwnerId(
+    id: number,
+    ownerId: number,
+  ): Promise<RecurringBooking> {
     const booking = await this.createQueryBuilder('recurringBookings')
       .where('recurringBookings.id = :id', { id })
       .andWhere('recurringBookings.owner.id = :ownerId', { ownerId })
       .getOne();
     return booking;
+  }
+
+  async findRecurringBookingWithOwner(id: number): Promise<RecurringBooking> {
+    return await this.createQueryBuilder('recurringBookings')
+      .leftJoinAndSelect('recurringBookings.owner', 'account')
+      .where('recurringBookings.id = :id', { id })
+      .getOne();
   }
 }

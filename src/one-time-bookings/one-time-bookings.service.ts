@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
+import { AccountsService } from 'src/accounts/accounts.service';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
+import { GuestsService } from 'src/guests/guests.service';
 import { Room } from 'src/rooms/room.entity';
 import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { DeleteResult } from 'typeorm';
@@ -15,6 +17,8 @@ export class OneTimeBookingsService {
   constructor(
     private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
     private readonly roomsRepository: RoomsRepository,
+    private readonly guestsService: GuestsService,
+    private readonly accountsService: AccountsService,
   ) {}
 
   async findAllPaginate(
@@ -28,6 +32,12 @@ export class OneTimeBookingsService {
     createOneTimeBookingDto: CreateOneTimeBookingDto,
     currentUserId: number,
   ): Promise<OneTimeBooking> {
+    // Make sure guests emails are unique
+    const emails = createOneTimeBookingDto.guests;
+    const uniqueEmails = [...new Set(emails)];
+
+    await this.checkEmails(uniqueEmails, currentUserId);
+
     const roomFromQueryData = await this.roomsRepository.findOneById(
       createOneTimeBookingDto.roomId,
     );
@@ -44,7 +54,7 @@ export class OneTimeBookingsService {
     const room = new Room();
     room.id = createOneTimeBookingDto.roomId;
 
-    const newOneTimeBooking = this.oneTimeBookingsRepository.create({
+    const newOneTimeBooking = await this.oneTimeBookingsRepository.create({
       createdAt: new Date(),
       meetingDate: createOneTimeBookingDto.meetingDate,
       startTime: createOneTimeBookingDto.startTime,
@@ -53,13 +63,68 @@ export class OneTimeBookingsService {
       owner: account,
     });
 
-    return this.oneTimeBookingsRepository.save(newOneTimeBooking);
+    const booking = await this.oneTimeBookingsRepository.save(
+      newOneTimeBooking,
+    );
+
+    const guests = await this.guestsService.createGuestsByEmails({
+      emails: uniqueEmails,
+      currentUserId,
+      oneTimeBookingId: booking.id,
+    });
+
+    return booking;
   }
 
+  private async checkEmails(emails: string[], currentUserId: number) {
+    // Check if guests exists
+    for (let i = 0; i < emails.length; i += 1) {
+      const email = emails[i];
+      const guest = await this.accountsService.getAccountByEmail(email);
+
+      if (!guest) {
+        throw new ServiceException(
+          `Guest with email ${email} not found. Try another one.`,
+        );
+      }
+      // get owner by id
+      const owner = await this.accountsService.findOne(currentUserId);
+
+      // check if owner email == guest email
+      if (owner.email === guest.email) {
+        throw new ServiceException(
+          `You can't invite yourself, please remove your email ${owner.email}`,
+        );
+      }
+    }
+  }
+
+  // Update for Admin
   async update(
     id: number,
     updateOneTimeBookingDto: UpdateOneTimeBookingDto,
   ): Promise<OneTimeBooking> {
+    const booking =
+      await this.oneTimeBookingsRepository.findOneTimeBookingWithOwner(id);
+    if (!booking) {
+      throw new ServiceException(
+        `Booking with id ${id} not found. Try another one.`,
+      );
+    }
+    const ownerId = booking.owner.id;
+
+    // Make sure guests emails are unique
+    const emails = updateOneTimeBookingDto.guests;
+    const uniqueEmails = [...new Set(emails)];
+
+    await this.checkEmails(uniqueEmails, ownerId);
+
+    await this.guestsService.updateGuestsByOneTimeBookingId(
+      uniqueEmails,
+      ownerId,
+      id,
+    );
+
     const oneTimeBookingToUpdate =
       await this.oneTimeBookingsRepository.findOneBy({ id });
 
@@ -90,11 +155,12 @@ export class OneTimeBookingsService {
     return this.oneTimeBookingsRepository.save(oneTimeBookingToUpdate);
   }
 
+  // Update for User
   async updateOwn(
     id: number,
     currentUserId: number,
     updateOneTimeBookingDto: UpdateOneTimeBookingDto,
-  ) {
+  ): Promise<OneTimeBooking> {
     // Check if booking exists
     const oneTimeBookingToUpdate =
       await this.oneTimeBookingsRepository.findOneBy({ id });
@@ -119,6 +185,7 @@ export class OneTimeBookingsService {
     return this.update(id, updateOneTimeBookingDto);
   }
 
+  // Delete for Admin
   async delete(id: number): Promise<DeleteResult> {
     const oneTimeBookingToDelete =
       await this.oneTimeBookingsRepository.findOneBy({ id });
@@ -129,9 +196,11 @@ export class OneTimeBookingsService {
       );
     }
 
+    await this.guestsService.deleteGuestsByOneTimeBookingId(id);
     return this.oneTimeBookingsRepository.delete(id);
   }
 
+  // Delete for User
   async deleteOwn(id: number, currentUserId: number): Promise<DeleteResult> {
     // Check if booking exists
     const oneTimeBookingToDelete =
@@ -154,6 +223,7 @@ export class OneTimeBookingsService {
       throw new ServiceException(`You can delete only own booking.`);
     }
 
+    await this.guestsService.deleteGuestsByOneTimeBookingId(id);
     return this.oneTimeBookingsRepository.delete(id);
   }
 }
