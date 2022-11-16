@@ -18,6 +18,8 @@ import { Role } from 'src/accounts/account.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { GuestsRepository } from 'src/guests/guests.repository';
+import { GuestsService } from 'src/guests/guests.service';
 import { CreateOneTimeBookingDto } from 'src/one-time-bookings/dto/create-one-time-booking.dto';
 import { UpdateOneTimeBookingDto } from 'src/one-time-bookings/dto/update-one-time-booking.dto';
 import { OneTimeBooking } from 'src/one-time-bookings/one-time-booking.entity';
@@ -42,14 +44,24 @@ export class BookingsController {
     private readonly oneTimeBookingsService: OneTimeBookingsService,
     private readonly recurringBookingsService: RecurringBookingsService,
     private readonly bookingsService: BookingsService,
+    private readonly guestsRepository: GuestsRepository,
+    private readonly guestsService: GuestsService,
   ) {}
+
+  @Get('/test/:id')
+  async test(@Param('id', ParseIntPipe) id: number) {
+    // return await this.guestsService.findAllGuestsByOneTimeBookingId(id);
+    // return await this.guestsService.findAllGuestsByRecurringBookingId(id);
+    // return await this.guestsService.findAllOneTimeBookingsByCurrentUserId(id);
+    // return await this.guestsService.findAllRecurringBookingsByCurrentUserId(id);
+  }
 
   @Get('/')
   async findAllBookingsByOfficeIdInRange(
     @Query()
     { officeId, startDate, endDate }: findAllBookingsByOfficeIdInRangeDto,
   ): Promise<IBookingsInRange<BookingDto>> {
-    return this.bookingsService.findAllBookingsByOfficeIdInRange(
+    return await this.bookingsService.findAllBookingsByOfficeIdInRange(
       officeId,
       startDate,
       endDate,
