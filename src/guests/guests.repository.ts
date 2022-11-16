@@ -21,4 +21,40 @@ export class GuestsRepository extends Repository<Guest> /*implements IGuestsRepo
       .getMany();
     return guests;
   }
+
+  // Should return an array of accounts that were invited on one-time booking
+  async findGuestsByOneTimeBookingId(id: number) {
+    const guests = await this.createQueryBuilder('guests')
+      .leftJoinAndSelect('guests.guest', 'account')
+      .where('guests.oneTimeBookingId = :id', { id })
+      .getMany();
+    return guests;
+  }
+
+  // Should return an array of accounts that were invited on recurring booking
+  async findGuestsByRecurringBookingId(id: number) {
+    const guests = await this.createQueryBuilder('guests')
+      .leftJoinAndSelect('guests.guest', 'account')
+      .where('guests.recurringBookingId = :id', { id })
+      .getMany();
+    return guests;
+  }
+
+  // Should return an array of one-time bookings where you were invited
+  async findOneTimeBookingsByCurrentUserId(id: number) {
+    const guests = await this.createQueryBuilder('guests')
+      .leftJoinAndSelect('guests.oneTimeBooking', 'one_time_booking')
+      .where('guests.guestId = :id', { id })
+      .getMany();
+    return guests;
+  }
+
+  // Should return an array of recurring bookings where you were invited
+  async findRecurringBookingsByCurrentUserId(id: number) {
+    const guests = await this.createQueryBuilder('guests')
+      .leftJoinAndSelect('guests.recurringBooking', 'recurring_booking')
+      .where('guests.guestId = :id', { id })
+      .getMany();
+    return guests;
+  }
 }
