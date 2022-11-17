@@ -161,7 +161,9 @@ export class GuestsService {
   }
 
   // Should return an array of one-time bookings where you were invited
-  async findAllOneTimeBookingsByCurrentUserId(currentUserId: number) {
+  async findAllOneTimeBookingsByCurrentUserId(
+    currentUserId: number,
+  ): Promise<OneTimeBooking[]> {
     const guests =
       await this.guestsRepository.findOneTimeBookingsByCurrentUserId(
         currentUserId,

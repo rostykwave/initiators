@@ -72,7 +72,26 @@ export class OneTimeBookingsRepository
 
     return await this.createQueryBuilder('oneTimeBookings')
       .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .leftJoinAndSelect('oneTimeBookings.owner', 'owner')
+      .leftJoinAndSelect('oneTimeBookings.guests', 'guest')
+      .leftJoinAndSelect('guest.guest', 'gu')
       .where('oneTimeBookings.owner.id = :ownerId', { ownerId })
+      .andWhere('oneTimeBookings.meetingDate >= :start_at', {
+        start_at: fromDateString,
+      })
+      .orderBy('oneTimeBookings.meetingDate', 'ASC')
+      .getMany();
+  }
+
+  async findAllByGuestId(guestId: number): Promise<OneTimeBooking[]> {
+    const fromDateString = parseDateStringWithoutTime(new Date());
+
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .leftJoinAndSelect('oneTimeBookings.owner', 'owner')
+      .leftJoinAndSelect('oneTimeBookings.guests', 'guest')
+      .leftJoinAndSelect('guest.guest', 'gu')
+      .where('gu.id = :guestId', { guestId })
       .andWhere('oneTimeBookings.meetingDate >= :start_at', {
         start_at: fromDateString,
       })
