@@ -20,7 +20,11 @@ export class SendgridEmailService {
       to: email,
       subject: 'Welcome to Incora',
       from: this.from,
-      html: INVITE_USER_EMAIL_HTML(email, password, this.registrationLink),
+      html: INVITE_USER_EMAIL_HTML(
+        email,
+        password,
+        `${this.registrationLink}email`,
+      ),
     };
 
     await SendGrid.send(mail);
