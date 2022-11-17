@@ -1,3 +1,4 @@
+import { Account } from 'src/accounts/account.entity';
 import { Room } from 'src/rooms/room.entity';
 
 export class BookingDto {
@@ -14,4 +15,12 @@ export class BookingDto {
   endTime: Date;
 
   room?: Room;
+
+  guests?: any;
+
+  owner?: any;
+
+  // owner?: Account;
+
+  // guests?: Account[];
 }

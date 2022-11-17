@@ -58,15 +58,18 @@ export class BookingsService {
     ownerId: number,
     page: number,
     limit: number,
-  ) /*: Promise<IBookingsPagination<BookingDto>>*/ {
+  ): Promise<IBookingsPagination<BookingDto>> {
     const allOwnOneTimeBookings =
       await this.oneTimeBookingsRepository.findAllByOwnerId(ownerId);
+    const allInvitedOneTimeBookings =
+      await this.oneTimeBookingsRepository.findAllByGuestId(ownerId);
 
     const allOwnRecurringBookings =
       await this.recurringBookingsRepository.findAllByOwnerId(ownerId);
 
     const allBookings = [
       ...this.bookingsMapper.mapOneTimeBookings(allOwnOneTimeBookings),
+      ...this.bookingsMapper.mapOneTimeBookings(allInvitedOneTimeBookings),
       ...this.bookingsMapper.mapRecurringBookings(allOwnRecurringBookings),
     ];
 

@@ -17,6 +17,15 @@ export class BookingsMapper {
       bookingDto.startTime = oneTimeBooking.startTime;
       bookingDto.endTime = oneTimeBooking.endTime;
       bookingDto.room = oneTimeBooking.room;
+      //removing guests password
+      bookingDto.guests = oneTimeBooking.guests.map((g) => {
+        const { guest } = g;
+        const { password, ...guestRest } = guest;
+        return guestRest;
+      });
+      //removing owner password
+      const { password, ...ownerRest } = oneTimeBooking.owner;
+      bookingDto.owner = ownerRest;
 
       return bookingDto;
     });
