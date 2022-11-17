@@ -6,6 +6,8 @@ import { OneTimeBookingsRepository } from './one-time-bookings.repository';
 import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { GuestsModule } from 'src/guests/guests.module';
 import { AccountsModule } from 'src/accounts/accounts.module';
+import { BookingsMapper } from 'src/bookings/bookings.mapper';
+import { RecurringBookingsRepository } from 'src/recurring-bookings/recurring-bookings.repository';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { AccountsModule } from 'src/accounts/accounts.module';
   providers: [
     OneTimeBookingsService,
     OneTimeBookingsRepository,
+    RecurringBookingsRepository,
     RoomsRepository,
+    BookingsMapper,
   ],
   exports: [OneTimeBookingsService],
 })

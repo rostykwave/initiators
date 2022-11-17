@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Account } from 'src/accounts/account.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
+import { BookingsMapper } from 'src/bookings/bookings.mapper';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
 import { GuestsService } from 'src/guests/guests.service';
+import { OneTimeBookingsRepository } from 'src/one-time-bookings/one-time-bookings.repository';
 import { Room } from 'src/rooms/room.entity';
 import { RoomsRepository } from 'src/rooms/rooms.repository';
 import { DeleteResult } from 'typeorm';
@@ -16,9 +18,11 @@ import { RecurringBookingsRepository } from './recurring-bookings.repository';
 export class RecurringBookingsService {
   constructor(
     private readonly recurringBookingsRepository: RecurringBookingsRepository,
+    private readonly oneTimeBookingsRepository: OneTimeBookingsRepository,
     private readonly roomsRepository: RoomsRepository,
     private readonly guestsService: GuestsService,
     private readonly accountsService: AccountsService,
+    private readonly bookingsMapper: BookingsMapper,
   ) {}
 
   async findAllPaginate(
@@ -45,6 +49,7 @@ export class RecurringBookingsService {
     if (!roomFromQueryData) {
       throw new ServiceException(
         `Room with id ${createRecurringBookingDto.roomId} not found. Try another one.`,
+        404,
       );
     }
     const account = new Account();
@@ -63,6 +68,21 @@ export class RecurringBookingsService {
       room,
       owner: account,
     });
+
+    /////checkAvaliabilityOfRoomForSpecificTime
+    try {
+      await this.checkAvaliabilityOfRoomForSpecificTime(
+        createRecurringBookingDto,
+        newRecurringBooking,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //////////////////////
 
     const booking = await this.recurringBookingsRepository.save(
       newRecurringBooking,
@@ -230,5 +250,52 @@ export class RecurringBookingsService {
 
     await this.guestsService.deleteGuestsByRecurringBookingId(id);
     return this.recurringBookingsRepository.delete(id);
+  }
+
+  private async checkAvaliabilityOfRoomForSpecificTime(
+    createRecurringBookingDto: CreateRecurringBookingDto,
+    newRecurringBooking: RecurringBooking,
+  ): Promise<any> {
+    const recurringBbookingsAtTheQueryTime =
+      await this.recurringBookingsRepository.findAllByRoomIdInRange(
+        createRecurringBookingDto.roomId,
+        createRecurringBookingDto.startDate,
+        createRecurringBookingDto.endDate,
+        createRecurringBookingDto.startTime,
+        createRecurringBookingDto.endTime,
+        createRecurringBookingDto.daysOfWeek,
+      );
+
+    if (recurringBbookingsAtTheQueryTime.length > 0) {
+      throw new ServiceException(
+        `Room with ${createRecurringBookingDto.roomId} will be occupied by another recurring meeting at the query time. Try another time.`,
+        400,
+      );
+    }
+
+    const oneTimeBookingsAtTheQueryTimePool =
+      await this.oneTimeBookingsRepository.findAllByRoomIdAndDatesInRange(
+        createRecurringBookingDto.roomId,
+        createRecurringBookingDto.startDate,
+        createRecurringBookingDto.endDate,
+        createRecurringBookingDto.startTime,
+        createRecurringBookingDto.endTime,
+      );
+    const newBookingsMapped = this.bookingsMapper.mapRecurringBookings([
+      newRecurringBooking,
+    ]);
+
+    const oneTimeBookingsAtTheQueryTime = newBookingsMapped.flatMap((b) => {
+      return oneTimeBookingsAtTheQueryTimePool.filter(
+        (a) => a.meetingDate === b.meetingDate,
+      );
+    });
+
+    if (oneTimeBookingsAtTheQueryTime.length > 0) {
+      throw new ServiceException(
+        `Room with ${createRecurringBookingDto.roomId} will be occupied by one-time meeting at the query time. Try another time.`,
+        400,
+      );
+    }
   }
 }

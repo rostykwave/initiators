@@ -1,5 +1,8 @@
 export class ServiceException extends Error {
-  constructor(message) {
+  readonly code: number;
+
+  constructor(message: string, code?: number) {
     super(message);
+    this.code = code;
   }
 }
