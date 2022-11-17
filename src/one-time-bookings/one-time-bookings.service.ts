@@ -171,6 +171,20 @@ export class OneTimeBookingsService {
     oneTimeBookingToUpdate.startTime = updateOneTimeBookingDto.startTime;
     oneTimeBookingToUpdate.endTime = updateOneTimeBookingDto.endTime;
 
+    /////checkAvaliabilityOfRoomForSpecificTime
+    try {
+      await this.checkAvaliabilityOfRoomForSpecificTime(
+        updateOneTimeBookingDto,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //////////////////////
+
     return this.oneTimeBookingsRepository.save(oneTimeBookingToUpdate);
   }
 

@@ -177,6 +177,21 @@ export class RecurringBookingsService {
     recurringBookingToUpdate.endTime = updateRecurringBookingDto.endTime;
     recurringBookingToUpdate.daysOfWeek = updateRecurringBookingDto.daysOfWeek;
 
+    /////checkAvaliabilityOfRoomForSpecificTime
+    try {
+      await this.checkAvaliabilityOfRoomForSpecificTime(
+        updateRecurringBookingDto,
+        recurringBookingToUpdate,
+      );
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //////////////////////
+
     return this.recurringBookingsRepository.save(recurringBookingToUpdate);
   }
 
