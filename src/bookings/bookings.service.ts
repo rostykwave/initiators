@@ -66,11 +66,14 @@ export class BookingsService {
 
     const allOwnRecurringBookings =
       await this.recurringBookingsRepository.findAllByOwnerId(ownerId);
+    const allInvitedRecurringBookings =
+      await this.recurringBookingsRepository.findAllByGuestId(ownerId);
 
     const allBookings = [
       ...this.bookingsMapper.mapOneTimeBookings(allOwnOneTimeBookings),
       ...this.bookingsMapper.mapOneTimeBookings(allInvitedOneTimeBookings),
       ...this.bookingsMapper.mapRecurringBookings(allOwnRecurringBookings),
+      ...this.bookingsMapper.mapRecurringBookings(allInvitedRecurringBookings),
     ];
 
     const sortedAllBookings = sortBookingsByTimeAndDate(allBookings);

@@ -58,6 +58,22 @@ export class BookingsMapper {
           bookingDto.startTime = recurringBooking.startTime;
           bookingDto.endTime = recurringBooking.endTime;
           bookingDto.room = recurringBooking.room;
+
+          //removing guests password
+          if (recurringBooking.guests) {
+            bookingDto.guests = recurringBooking.guests.map((g) => {
+              const { guest } = g;
+              const { password, ...guestRest } = guest;
+              return guestRest;
+            });
+          }
+
+          //removing owner password
+          if (recurringBooking.owner) {
+            const { password, ...ownerRest } = recurringBooking.owner;
+            bookingDto.owner = ownerRest;
+          }
+
           mappedBookings.push(bookingDto);
 
           // const booking = {
