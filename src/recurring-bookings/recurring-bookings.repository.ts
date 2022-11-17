@@ -1,7 +1,7 @@
 import { DataSource, Repository } from 'typeorm';
 import { IRecurringBookingsRepository } from './interfaces/recurring-bookings.repository.interface';
 import { Injectable } from '@nestjs/common';
-import { RecurringBooking } from './recurring-booking.entity';
+import { DaysOfWeek, RecurringBooking } from './recurring-booking.entity';
 import {
   IPaginationOptions,
   paginate,
@@ -30,6 +30,43 @@ export class RecurringBookingsRepository
         start_at: endDate,
       })
       .orderBy('recurringBookings.startDate', 'ASC')
+      .getMany();
+  }
+
+  async findAllByRoomIdInRange(
+    roomId: number,
+    startDate: Date,
+    endDate: Date,
+    startTime: Date,
+    endTime: Date,
+    daysOfWeek: DaysOfWeek[],
+  ): Promise<RecurringBooking[]> {
+    return await this.createQueryBuilder('recurringBookings')
+      .leftJoinAndSelect('recurringBookings.room', 'room')
+      .where('room.id = :roomId', { roomId })
+      .andWhere('recurringBookings.startDate >= :startDate', { startDate })
+      .andWhere('recurringBookings.startDate <= :endDate', { endDate })
+      .andWhere('recurringBookings.endDate <= :endDate', { endDate })
+      .andWhere('recurringBookings.endDate > :startDate', { startDate })
+      .andWhere('recurringBookings.startTime < :endTime', { endTime })
+      .andWhere(' recurringBookings.endTime > :startTime', { startTime })
+      .andWhere(' recurringBookings.daysOfWeek && :daysOfWeek', { daysOfWeek })
+      .getMany();
+  }
+
+  async findAllByRoomIdAndMeetingDateInRange(
+    roomId: number,
+    meetingDate: Date,
+    startTime: Date,
+    endTime: Date,
+  ): Promise<RecurringBooking[]> {
+    return await this.createQueryBuilder('recurringBookings')
+      .leftJoinAndSelect('recurringBookings.room', 'room')
+      .where('room.id = :roomId', { roomId })
+      .andWhere('recurringBookings.startDate <= :meetingDate', { meetingDate })
+      .andWhere('recurringBookings.endDate >= :meetingDate', { meetingDate })
+      .andWhere('recurringBookings.startTime < :endTime', { endTime })
+      .andWhere(' recurringBookings.endTime > :startTime', { startTime })
       .getMany();
   }
 

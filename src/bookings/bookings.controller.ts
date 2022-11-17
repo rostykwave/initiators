@@ -113,7 +113,7 @@ export class BookingsController {
       );
     } catch (error) {
       if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
+        throw new HttpException(error.message, error.code);
       } else {
         throw error;
       }
@@ -132,7 +132,7 @@ export class BookingsController {
       );
     } catch (error) {
       if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
+        throw new HttpException(error.message, error.code);
       } else {
         throw error;
       }

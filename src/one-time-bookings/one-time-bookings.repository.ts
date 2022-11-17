@@ -35,6 +35,38 @@ export class OneTimeBookingsRepository
       .getMany();
   }
 
+  async findAllByRoomIdInRange(
+    roomId: number,
+    meetingDate: Date,
+    startTime: Date,
+    endTime: Date,
+  ): Promise<OneTimeBooking[]> {
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .where('room.id = :roomId', { roomId })
+      .andWhere('oneTimeBookings.meetingDate = :meetingDate', { meetingDate })
+      .andWhere('oneTimeBookings.startTime < :endTime', { endTime })
+      .andWhere(' oneTimeBookings.endTime > :startTime', { startTime })
+      .getMany();
+  }
+
+  async findAllByRoomIdAndDatesInRange(
+    roomId: number,
+    startDate: Date,
+    endDate: Date,
+    startTime: Date,
+    endTime: Date,
+  ): Promise<OneTimeBooking[]> {
+    return await this.createQueryBuilder('oneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .where('room.id = :roomId', { roomId })
+      .andWhere('oneTimeBookings.meetingDate >= :startDate', { startDate })
+      .andWhere('oneTimeBookings.meetingDate <= :endDate', { endDate })
+      .andWhere('oneTimeBookings.startTime < :endTime', { endTime })
+      .andWhere(' oneTimeBookings.endTime > :startTime', { startTime })
+      .getMany();
+  }
+
   async findAllByOwnerId(ownerId: number): Promise<OneTimeBooking[]> {
     const fromDateString = parseDateStringWithoutTime(new Date());
 
