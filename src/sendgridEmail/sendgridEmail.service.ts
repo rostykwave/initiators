@@ -23,7 +23,7 @@ export class SendgridEmailService {
       html: INVITE_USER_EMAIL_HTML(
         email,
         password,
-        `${this.registrationLink}email`,
+        `${this.registrationLink}${email}`,
       ),
     };
 
