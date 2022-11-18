@@ -6,8 +6,11 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Account } from 'src/accounts/account.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { CreateAccountDto } from 'src/accounts/dto/create-account.dto';
+import { ServiceException } from 'src/bookings/exceptions/service.exception';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -76,6 +79,10 @@ export class AuthService {
   //   return this.generateToken(accountSafe);
   // }
 
+  async changePassword(changePasswordDto: ChangePasswordDto) {
+    return await this.checkAccount(changePasswordDto);
+  }
+
   private async generateToken(account: CreateAccountDto): Promise<any> {
     const payload = {
       id: account.id,
@@ -83,5 +90,23 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
     };
+  }
+
+  private async checkAccount(
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<Account> {
+    const account = await this.accountsService.getAccountByEmail(
+      changePasswordDto.email,
+    );
+    if (account) {
+      const passwordEquals = await bcrypt.compare(
+        changePasswordDto.oldPassword,
+        account.password,
+      );
+      if (passwordEquals) {
+        return account;
+      }
+    }
+    throw new ServiceException('Email or old password incorrect', 401);
   }
 }
