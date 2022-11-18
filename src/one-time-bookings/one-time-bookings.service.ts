@@ -40,7 +40,18 @@ export class OneTimeBookingsService {
     const emails = createOneTimeBookingDto.guests;
     const uniqueEmails = [...new Set(emails)];
 
-    await this.checkEmails(uniqueEmails, currentUserId);
+    // await this.checkEmails(uniqueEmails, currentUserId);
+    //
+    try {
+      await this.checkEmails(uniqueEmails, currentUserId);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //
 
     const roomFromQueryData = await this.roomsRepository.findOneById(
       createOneTimeBookingDto.roomId,
@@ -104,6 +115,7 @@ export class OneTimeBookingsService {
       if (!guest) {
         throw new ServiceException(
           `Guest with email ${email} not found. Try another one.`,
+          404,
         );
       }
       // get owner by id
@@ -113,6 +125,7 @@ export class OneTimeBookingsService {
       if (owner.email === guest.email) {
         throw new ServiceException(
           `You can't invite yourself, please remove your email ${owner.email}`,
+          400,
         );
       }
     }
@@ -128,6 +141,7 @@ export class OneTimeBookingsService {
     if (!booking) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
     const ownerId = booking.owner.id;
@@ -136,7 +150,18 @@ export class OneTimeBookingsService {
     const emails = updateOneTimeBookingDto.guests;
     const uniqueEmails = [...new Set(emails)];
 
-    await this.checkEmails(uniqueEmails, ownerId);
+    // await this.checkEmails(uniqueEmails, ownerId);
+    //
+    try {
+      await this.checkEmails(uniqueEmails, ownerId);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //
 
     await this.guestsService.updateGuestsByOneTimeBookingId(
       uniqueEmails,
@@ -150,6 +175,7 @@ export class OneTimeBookingsService {
     if (!oneTimeBookingToUpdate) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -160,6 +186,7 @@ export class OneTimeBookingsService {
     if (!roomFromQueryData) {
       throw new ServiceException(
         `Room with id ${updateOneTimeBookingDto.roomId} not found. Try another one.`,
+        404,
       );
     }
 
@@ -201,6 +228,7 @@ export class OneTimeBookingsService {
     if (!oneTimeBookingToUpdate) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -212,7 +240,7 @@ export class OneTimeBookingsService {
       );
 
     if (!oneTimeBookingToUpdateSafe) {
-      throw new ServiceException(`You can change only own booking.`);
+      throw new ServiceException(`You can change only own booking.`, 403);
     }
 
     return this.update(id, updateOneTimeBookingDto);
@@ -226,6 +254,7 @@ export class OneTimeBookingsService {
     if (!oneTimeBookingToDelete) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -242,6 +271,7 @@ export class OneTimeBookingsService {
     if (!oneTimeBookingToDelete) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -253,7 +283,7 @@ export class OneTimeBookingsService {
       );
 
     if (!oneTimeBookingToDeleteSafe) {
-      throw new ServiceException(`You can delete only own booking.`);
+      throw new ServiceException(`You can delete only own booking.`, 403);
     }
 
     await this.guestsService.deleteGuestsByOneTimeBookingId(id);

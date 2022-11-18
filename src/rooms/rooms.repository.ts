@@ -32,15 +32,24 @@ export class RoomsRepository
     const allRooms = await this.createQueryBuilder('rooms')
       .leftJoinAndSelect(
         'rooms.oneTimeBookings',
-        'oneTimeBooking',
-        'oneTimeBooking.meetingDate BETWEEN :from AND :to',
+        'oneTimeBookings',
+        'oneTimeBookings.meetingDate BETWEEN :from AND :to',
         { from: fromDateString, to: toDateString },
       )
+      .leftJoinAndSelect('oneTimeBookings.owner', 'ownerOfOneTimeBookings')
+      .leftJoinAndSelect('oneTimeBookings.guests', 'guestOfOneTimeBookings')
+      .leftJoinAndSelect('guestOfOneTimeBookings.guest', 'guOfOneTimeBookings')
       .leftJoinAndSelect(
         'rooms.recurringBookings',
         'recurringBookings',
         'recurringBookings.endDate >= :start_at',
         { start_at: fromDateString },
+      )
+      .leftJoinAndSelect('recurringBookings.owner', 'ownerOfRecurringBooking')
+      .leftJoinAndSelect('recurringBookings.guests', 'guestOfRecurringBooking')
+      .leftJoinAndSelect(
+        'guestOfRecurringBooking.guest',
+        'guOfRecurringBooking',
       )
       .where('rooms.office.id = :officeId', { officeId })
       .orderBy('rooms.id', 'ASC')

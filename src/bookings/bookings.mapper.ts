@@ -18,7 +18,7 @@ export class BookingsMapper {
       bookingDto.endTime = oneTimeBooking.endTime;
       bookingDto.room = oneTimeBooking.room;
       //removing guests password
-      if (bookingDto.guests) {
+      if (oneTimeBooking.guests) {
         bookingDto.guests = oneTimeBooking.guests.map((g) => {
           const { guest } = g;
           const { password, ...guestRest } = guest;
