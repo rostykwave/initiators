@@ -41,7 +41,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Put('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-    console.log('Good job mate!');
     try {
       return await this.authService.changePassword(changePasswordDto);
     } catch (error) {

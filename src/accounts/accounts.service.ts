@@ -71,4 +71,8 @@ export class AccountsService {
     account.password = hashPassword;
     return this.accountRepository.save(account);
   }
+
+  async saveAccount(account: Account): Promise<Account> {
+    return this.accountRepository.save(account);
+  }
 }

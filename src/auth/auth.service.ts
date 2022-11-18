@@ -80,7 +80,12 @@ export class AuthService {
   // }
 
   async changePassword(changePasswordDto: ChangePasswordDto) {
-    return await this.checkAccount(changePasswordDto);
+    const candidate = await this.checkAccount(changePasswordDto);
+    const hashPassword = await bcrypt.hash(changePasswordDto.newPassword, 5);
+    candidate.password = hashPassword;
+    // should save updated account
+    await this.accountsService.saveAccount(candidate);
+    return await this.generateToken(candidate);
   }
 
   private async generateToken(account: CreateAccountDto): Promise<any> {
