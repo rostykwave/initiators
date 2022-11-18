@@ -24,6 +24,9 @@ export class RecurringBookingsRepository
   ): Promise<RecurringBooking[]> {
     return await this.createQueryBuilder('recurringBookings')
       .leftJoinAndSelect('recurringBookings.room', 'room')
+      .leftJoinAndSelect('recurringBookings.owner', 'owner')
+      .leftJoinAndSelect('recurringBookings.guests', 'guest')
+      .leftJoinAndSelect('guest.guest', 'gu')
       .leftJoinAndSelect('room.office', 'office')
       .where('office.id = :officeId', { officeId })
       .andWhere('recurringBookings.endDate >= :start_at', {

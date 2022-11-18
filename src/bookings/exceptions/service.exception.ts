@@ -1,5 +1,5 @@
 export class ServiceException extends Error {
-  private code = 400;
+  readonly code: number = 400;
 
   constructor(message: string, code?: number) {
     super(message);
