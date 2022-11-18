@@ -40,8 +40,20 @@ export class RecurringBookingsService {
     const emails = createRecurringBookingDto.guests;
     const uniqueEmails = [...new Set(emails)];
 
-    await this.checkEmails(uniqueEmails, currentUserId);
+    // await this.checkEmails(uniqueEmails, currentUserId);
+    //
+    try {
+      await this.checkEmails(uniqueEmails, currentUserId);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //
 
+    console.log('first');
     const roomFromQueryData = await this.roomsRepository.findOneById(
       createRecurringBookingDto.roomId,
     );
@@ -106,6 +118,7 @@ export class RecurringBookingsService {
       if (!guest) {
         throw new ServiceException(
           `Guest with email ${email} not found. Try another one.`,
+          404,
         );
       }
       // get owner by id
@@ -115,6 +128,7 @@ export class RecurringBookingsService {
       if (owner.email === guest.email) {
         throw new ServiceException(
           `You can't invite yourself, please remove your email ${owner.email}`,
+          400,
         );
       }
     }
@@ -130,6 +144,7 @@ export class RecurringBookingsService {
     if (!booking) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
     const ownerId = booking.owner.id;
@@ -140,7 +155,18 @@ export class RecurringBookingsService {
     const emails = updateRecurringBookingDto.guests;
     const uniqueEmails = [...new Set(emails)];
 
-    await this.checkEmails(uniqueEmails, ownerId);
+    // await this.checkEmails(uniqueEmails, ownerId);
+    //
+    try {
+      await this.checkEmails(uniqueEmails, ownerId);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new ServiceException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+    //
 
     await this.guestsService.updateGuestsByRecurringBookingId(
       uniqueEmails,
@@ -154,6 +180,7 @@ export class RecurringBookingsService {
     if (!recurringBookingToUpdate) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -164,6 +191,7 @@ export class RecurringBookingsService {
     if (!roomFromQueryData) {
       throw new ServiceException(
         `Room with id ${updateRecurringBookingDto.roomId} not found. Try another one.`,
+        404,
       );
     }
 
@@ -208,6 +236,7 @@ export class RecurringBookingsService {
     if (!recurringBookingToUpdate) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -219,7 +248,7 @@ export class RecurringBookingsService {
       );
 
     if (!recurringBookingToUpdateSafe) {
-      throw new ServiceException(`You can change only own booking.`);
+      throw new ServiceException(`You can change only own booking.`, 403);
     }
 
     return this.update(id, updateRecurringBookingDto);
@@ -233,6 +262,7 @@ export class RecurringBookingsService {
     if (!recurringBookingToDelete) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -249,6 +279,7 @@ export class RecurringBookingsService {
     if (!recurringBookingToDelete) {
       throw new ServiceException(
         `Booking with id ${id} not found. Try another one.`,
+        404,
       );
     }
 
@@ -260,7 +291,7 @@ export class RecurringBookingsService {
       );
 
     if (!recurringBookingToDeleteSafe) {
-      throw new ServiceException(`You can delete only own booking.`);
+      throw new ServiceException(`You can delete only own booking.`, 403);
     }
 
     await this.guestsService.deleteGuestsByRecurringBookingId(id);

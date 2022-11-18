@@ -25,6 +25,9 @@ export class OneTimeBookingsRepository
   ): Promise<OneTimeBooking[]> {
     return await this.createQueryBuilder('oneTimeBookings')
       .leftJoinAndSelect('oneTimeBookings.room', 'room')
+      .leftJoinAndSelect('oneTimeBookings.owner', 'owner')
+      .leftJoinAndSelect('oneTimeBookings.guests', 'guest')
+      .leftJoinAndSelect('guest.guest', 'gu')
       .leftJoinAndSelect('room.office', 'office')
       .where('office.id = :officeId', { officeId })
       .andWhere('oneTimeBookings.meetingDate BETWEEN :from AND :to', {

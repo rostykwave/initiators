@@ -160,7 +160,7 @@ export class BookingsController {
       );
     } catch (error) {
       if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
+        throw new HttpException(error.message, error.code);
       } else {
         throw error;
       }
@@ -188,7 +188,7 @@ export class BookingsController {
       );
     } catch (error) {
       if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
+        throw new HttpException(error.message, error.code);
       } else {
         throw error;
       }
@@ -208,7 +208,7 @@ export class BookingsController {
       return await this.oneTimeBookingsService.delete(id);
     } catch (error) {
       if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
+        throw new HttpException(error.message, error.code);
       } else {
         throw error;
       }
@@ -228,7 +228,7 @@ export class BookingsController {
       return await this.recurringBookingsService.delete(id);
     } catch (error) {
       if (error instanceof ServiceException) {
-        throw new HttpException(error.message, 404);
+        throw new HttpException(error.message, error.code);
       } else {
         throw error;
       }

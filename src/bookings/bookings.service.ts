@@ -27,6 +27,7 @@ export class BookingsService {
         startDate,
         endDate,
       );
+
     const allRecurringTimeBookings =
       await this.recurringBookingsRepository.findAllBookingsByOfficeIdInRange(
         officeId,
