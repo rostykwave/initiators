@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
+import { MailModule } from 'src/email/email.module';
 
 const configService = new ConfigService();
 
@@ -19,6 +20,7 @@ const configService = new ConfigService();
       secret: configService.get<string>('SECRET'),
       signOptions: { expiresIn: '5h' },
     }),
+    MailModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],

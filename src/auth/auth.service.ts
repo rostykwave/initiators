@@ -10,13 +10,17 @@ import { Account } from 'src/accounts/account.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { CreateAccountDto } from 'src/accounts/dto/create-account.dto';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
+import { EmailService } from 'src/email/email.service';
+import { generator } from 'ts-password-generator';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async validateAccount(email: string, password: string): Promise<any> {
@@ -86,6 +90,36 @@ export class AuthService {
     // should save updated account
     await this.accountsService.saveAccount(candidate);
     return await this.generateToken(candidate);
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const candidate = await this.accountsService.getAccountByEmail(
+      resetPasswordDto.email,
+    );
+    if (!candidate) {
+      throw new ServiceException(
+        `Account with email ${resetPasswordDto.email} not found`,
+        404,
+      );
+    }
+    const password: string = generator({
+      charsQty: 6,
+      haveNumbers: true,
+      haveString: false,
+    });
+    console.log('Password', password);
+
+    // const hashPassword = await bcrypt.hash(changePasswordDto.newPassword, 5);
+    // candidate.password = hashPassword;
+    // // should save updated account
+    // await this.accountsService.saveAccount(candidate);
+
+    // send password via email
+    await this.emailService.sendResetPasswordEmail(
+      resetPasswordDto.email,
+      password,
+    );
+    // return await this.generateToken(candidate);
   }
 
   private async generateToken(account: CreateAccountDto): Promise<any> {

@@ -8,4 +8,8 @@ export class EmailService {
   async sendInvitationEmail(email: string, password: string) {
     this.sendgridEmailService.sendInvitationEmail(email, password);
   }
+
+  async sendResetPasswordEmail(email: string, password: string) {
+    this.sendgridEmailService.sendResetPasswordEmail(email, password);
+  }
 }
