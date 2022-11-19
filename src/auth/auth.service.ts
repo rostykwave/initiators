@@ -107,19 +107,19 @@ export class AuthService {
       haveNumbers: true,
       haveString: false,
     });
+
     console.log('Password', password);
 
-    // const hashPassword = await bcrypt.hash(changePasswordDto.newPassword, 5);
-    // candidate.password = hashPassword;
-    // // should save updated account
-    // await this.accountsService.saveAccount(candidate);
+    candidate.password = await bcrypt.hash(password, 5);
+    // should save updated account
+    await this.accountsService.saveAccount(candidate);
 
     // send password via email
     await this.emailService.sendResetPasswordEmail(
       resetPasswordDto.email,
       password,
     );
-    // return await this.generateToken(candidate);
+    return await this.generateToken(candidate);
   }
 
   private async generateToken(account: CreateAccountDto): Promise<any> {
