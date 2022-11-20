@@ -6,14 +6,22 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Account } from 'src/accounts/account.entity';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { CreateAccountDto } from 'src/accounts/dto/create-account.dto';
+import { ServiceException } from 'src/bookings/exceptions/service.exception';
+import { EmailService } from 'src/email/email.service';
+import { generator } from 'ts-password-generator';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ResetPasswordApproveDto } from './dto/reset-password-approve.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async validateAccount(email: string, password: string): Promise<any> {
@@ -76,6 +84,63 @@ export class AuthService {
   //   return this.generateToken(accountSafe);
   // }
 
+  async changePassword(changePasswordDto: ChangePasswordDto) {
+    const candidate = await this.checkAccount(changePasswordDto);
+    const hashPassword = await bcrypt.hash(changePasswordDto.newPassword, 5);
+    candidate.password = hashPassword;
+    // should save updated account
+    await this.accountsService.saveAccount(candidate);
+    return await this.generateToken(candidate);
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const candidate = await this.accountsService.getAccountByEmail(
+      resetPasswordDto.email,
+    );
+    if (!candidate) {
+      throw new ServiceException(
+        `Account with email ${resetPasswordDto.email} not found`,
+        404,
+      );
+    }
+    const password: string = generator({
+      charsQty: 6,
+      haveNumbers: true,
+      haveString: false,
+    });
+
+    candidate.password = await bcrypt.hash(password, 5);
+    // should save updated account
+    await this.accountsService.saveAccount(candidate);
+
+    // send password via email
+    await this.emailService.sendResetPasswordEmail(
+      resetPasswordDto.email,
+      password,
+    );
+    return await this.generateToken(candidate);
+  }
+
+  async resetPasswordApprove(resetPasswordApproveDto: ResetPasswordApproveDto) {
+    const candidate = await this.accountsService.getAccountByEmail(
+      resetPasswordApproveDto.email,
+    );
+    if (!candidate) {
+      throw new ServiceException(
+        `Account with email ${resetPasswordApproveDto.email} not found`,
+        404,
+      );
+    }
+    const hashPassword = await bcrypt.hash(
+      resetPasswordApproveDto.newPassword,
+      5,
+    );
+    candidate.password = hashPassword;
+    // should save updated account
+    await this.accountsService.saveAccount(candidate);
+    return await this.generateToken(candidate);
+  }
+
   private async generateToken(account: CreateAccountDto): Promise<any> {
     const payload = {
       id: account.id,
@@ -83,5 +148,23 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
     };
+  }
+
+  private async checkAccount(
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<Account> {
+    const account = await this.accountsService.getAccountByEmail(
+      changePasswordDto.email,
+    );
+    if (account) {
+      const passwordEquals = await bcrypt.compare(
+        changePasswordDto.oldPassword,
+        account.password,
+      );
+      if (passwordEquals) {
+        return account;
+      }
+    }
+    throw new ServiceException('Email or old password incorrect', 401);
   }
 }
