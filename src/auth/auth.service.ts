@@ -13,6 +13,7 @@ import { ServiceException } from 'src/bookings/exceptions/service.exception';
 import { EmailService } from 'src/email/email.service';
 import { generator } from 'ts-password-generator';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ResetPasswordApproveDto } from './dto/reset-password-approve.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
@@ -108,8 +109,6 @@ export class AuthService {
       haveString: false,
     });
 
-    console.log('Password', password);
-
     candidate.password = await bcrypt.hash(password, 5);
     // should save updated account
     await this.accountsService.saveAccount(candidate);
@@ -119,6 +118,26 @@ export class AuthService {
       resetPasswordDto.email,
       password,
     );
+    return await this.generateToken(candidate);
+  }
+
+  async resetPasswordApprove(resetPasswordApproveDto: ResetPasswordApproveDto) {
+    const candidate = await this.accountsService.getAccountByEmail(
+      resetPasswordApproveDto.email,
+    );
+    if (!candidate) {
+      throw new ServiceException(
+        `Account with email ${resetPasswordApproveDto.email} not found`,
+        404,
+      );
+    }
+    const hashPassword = await bcrypt.hash(
+      resetPasswordApproveDto.newPassword,
+      5,
+    );
+    candidate.password = hashPassword;
+    // should save updated account
+    await this.accountsService.saveAccount(candidate);
     return await this.generateToken(candidate);
   }
 

@@ -13,6 +13,7 @@ import { CreateAccountDto } from 'src/accounts/dto/create-account.dto';
 import { ServiceException } from 'src/bookings/exceptions/service.exception';
 import { AuthService } from './auth.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ResetPasswordApproveDto } from './dto/reset-password-approve.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -58,6 +59,24 @@ export class AuthController {
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
       return await this.authService.resetPassword(resetPasswordDto);
+    } catch (error) {
+      if (error instanceof ServiceException) {
+        throw new HttpException(error.message, error.code);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('reset-password-approve')
+  async resetPasswordApprove(
+    @Body() resetPasswordApproveDto: ResetPasswordApproveDto,
+  ) {
+    try {
+      return await this.authService.resetPasswordApprove(
+        resetPasswordApproveDto,
+      );
     } catch (error) {
       if (error instanceof ServiceException) {
         throw new HttpException(error.message, error.code);
