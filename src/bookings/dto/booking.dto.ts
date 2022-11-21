@@ -1,5 +1,7 @@
-// import { Account } from 'src/accounts/account.entity';
+import { GuestDto } from 'src/guests/dto/guest.dto';
+import { DaysOfWeek } from 'src/recurring-bookings/recurring-booking.entity';
 import { Room } from 'src/rooms/room.entity';
+import { OwnerDto } from './owner.dto';
 
 export class BookingDto {
   id: number;
@@ -16,13 +18,15 @@ export class BookingDto {
 
   endTime: Date;
 
-  room?: Room;
+  daysOfWeek: DaysOfWeek[] | null;
 
-  guests?: any;
+  startDate: Date | null;
 
-  owner?: any;
+  endDate: Date | null;
 
-  // owner?: Account;
+  room: Room;
 
-  // guests?: Account[];
+  guests: GuestDto[];
+
+  owner: OwnerDto;
 }

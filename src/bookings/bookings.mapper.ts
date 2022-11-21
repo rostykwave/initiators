@@ -17,6 +17,9 @@ export class BookingsMapper {
       bookingDto.meetingDate = oneTimeBooking.meetingDate;
       bookingDto.startTime = oneTimeBooking.startTime;
       bookingDto.endTime = oneTimeBooking.endTime;
+      bookingDto.daysOfWeek = null;
+      bookingDto.startDate = null;
+      bookingDto.endDate = null;
       bookingDto.room = oneTimeBooking.room;
       //removing guests password
       if (oneTimeBooking.guests) {
@@ -64,6 +67,9 @@ export class BookingsMapper {
           bookingDto.meetingDate = parseDateStringWithoutTime(nextDate);
           bookingDto.startTime = recurringBooking.startTime;
           bookingDto.endTime = recurringBooking.endTime;
+          bookingDto.daysOfWeek = recurringBooking.daysOfWeek;
+          bookingDto.startDate = recurringBooking.startDate;
+          bookingDto.endDate = recurringBooking.endDate;
           bookingDto.room = recurringBooking.room;
 
           //removing guests password
