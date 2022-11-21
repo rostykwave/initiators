@@ -82,7 +82,7 @@ export class RecurringBookingsRepository
       .leftJoinAndSelect('recurringBookings.guests', 'guest')
       .leftJoinAndSelect('guest.guest', 'gu')
       .where('recurringBookings.owner.id = :ownerId', { ownerId })
-      .where('recurringBookings.endDate >= :start_at', {
+      .andWhere('recurringBookings.endDate >= :start_at', {
         start_at: fromDateString,
       })
       .orderBy('recurringBookings.startDate', 'ASC')
@@ -98,7 +98,7 @@ export class RecurringBookingsRepository
       .leftJoinAndSelect('recurringBookings.guests', 'guest')
       .leftJoinAndSelect('guest.guest', 'gu')
       .where('gu.id = :guestId', { guestId })
-      .where('recurringBookings.endDate >= :start_at', {
+      .andWhere('recurringBookings.endDate >= :start_at', {
         start_at: fromDateString,
       })
       .orderBy('recurringBookings.startDate', 'ASC')
