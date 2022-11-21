@@ -1,10 +1,12 @@
-import { Account } from 'src/accounts/account.entity';
+// import { Account } from 'src/accounts/account.entity';
 import { Room } from 'src/rooms/room.entity';
 
 export class BookingDto {
   id: number;
 
   createdAt: Date;
+
+  title: string;
 
   isRecurring: boolean;
 

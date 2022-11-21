@@ -73,6 +73,7 @@ export class RecurringBookingsService {
     const newRecurringBooking = await this.recurringBookingsRepository.create({
       createdAt: new Date(),
       startDate: createRecurringBookingDto.startDate,
+      title: createRecurringBookingDto.title,
       endDate: createRecurringBookingDto.endDate,
       startTime: createRecurringBookingDto.startTime,
       endTime: createRecurringBookingDto.endTime,
@@ -199,6 +200,7 @@ export class RecurringBookingsService {
     room.id = updateRecurringBookingDto.roomId;
 
     recurringBookingToUpdate.room = room;
+    recurringBookingToUpdate.title = updateRecurringBookingDto.title;
     recurringBookingToUpdate.startDate = updateRecurringBookingDto.startDate;
     recurringBookingToUpdate.endDate = updateRecurringBookingDto.endDate;
     recurringBookingToUpdate.startTime = updateRecurringBookingDto.startTime;

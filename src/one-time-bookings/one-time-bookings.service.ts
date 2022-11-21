@@ -72,6 +72,7 @@ export class OneTimeBookingsService {
 
     const newOneTimeBooking = await this.oneTimeBookingsRepository.create({
       createdAt: new Date(),
+      title: createOneTimeBookingDto.title,
       meetingDate: createOneTimeBookingDto.meetingDate,
       startTime: createOneTimeBookingDto.startTime,
       endTime: createOneTimeBookingDto.endTime,
@@ -194,6 +195,7 @@ export class OneTimeBookingsService {
     room.id = updateOneTimeBookingDto.roomId;
 
     oneTimeBookingToUpdate.room = room;
+    oneTimeBookingToUpdate.title = updateOneTimeBookingDto.title;
     oneTimeBookingToUpdate.meetingDate = updateOneTimeBookingDto.meetingDate;
     oneTimeBookingToUpdate.startTime = updateOneTimeBookingDto.startTime;
     oneTimeBookingToUpdate.endTime = updateOneTimeBookingDto.endTime;

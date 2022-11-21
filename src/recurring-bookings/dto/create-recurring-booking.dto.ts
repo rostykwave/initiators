@@ -8,12 +8,18 @@ import {
   Validate,
   IsArray,
   ArrayMinSize,
+  MinLength,
+  IsString,
 } from 'class-validator';
 import { DaysOfWeek } from '../recurring-booking.entity';
 import { IsBeforeConstraint } from './custom-validation-classes/IsBeforeConstraint';
 import { IsInTimeRange } from './custom-validation-classes/IsInTimeRange';
 
 export class CreateRecurringBookingDto {
+  @MinLength(1)
+  @IsString()
+  title: string;
+
   @IsDateString()
   @Validate(IsBeforeConstraint, ['endDate'])
   startDate: Date;

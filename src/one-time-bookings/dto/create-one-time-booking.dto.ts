@@ -6,10 +6,16 @@ import {
   Validate,
   IsArray,
   ArrayMinSize,
+  MinLength,
+  IsString,
 } from 'class-validator';
 import { IsBeforeConstraint } from 'src/recurring-bookings/dto/custom-validation-classes/IsBeforeConstraint';
 
 export class CreateOneTimeBookingDto {
+  @MinLength(1)
+  @IsString()
+  title: string;
+
   @IsDateString()
   meetingDate: Date;
 
