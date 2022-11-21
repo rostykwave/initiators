@@ -1,4 +1,5 @@
 // import { Account } from 'src/accounts/account.entity';
+import { DaysOfWeek } from 'src/recurring-bookings/recurring-booking.entity';
 import { Room } from 'src/rooms/room.entity';
 
 export class BookingDto {
@@ -15,6 +16,12 @@ export class BookingDto {
   startTime: Date;
 
   endTime: Date;
+
+  daysOfWeek: DaysOfWeek[] | null;
+
+  startDate: Date | null;
+
+  endDate: Date | null;
 
   room?: Room;
 
