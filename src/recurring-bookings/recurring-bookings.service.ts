@@ -314,7 +314,14 @@ export class RecurringBookingsService {
         createRecurringBookingDto.daysOfWeek,
       );
 
-    if (recurringBbookingsAtTheQueryTime.length > 0) {
+    const currentRecurringBooking = recurringBbookingsAtTheQueryTime.find(
+      (b) => b.id === newRecurringBooking.id,
+    );
+
+    if (
+      !currentRecurringBooking &&
+      recurringBbookingsAtTheQueryTime.length > 0
+    ) {
       throw new ServiceException(
         `Room with ${createRecurringBookingDto.roomId} will be occupied by another recurring meeting at the query time. Try another time.`,
         400,
