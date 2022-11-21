@@ -18,6 +18,9 @@ export class OneTimeBooking {
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
+  @Column()
+  title: string;
+
   @Column({ type: 'date' })
   meetingDate: Date;
 

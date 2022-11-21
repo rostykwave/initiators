@@ -73,6 +73,7 @@ export class RecurringBookingsService {
     const newRecurringBooking = await this.recurringBookingsRepository.create({
       createdAt: new Date(),
       startDate: createRecurringBookingDto.startDate,
+      title: createRecurringBookingDto.title,
       endDate: createRecurringBookingDto.endDate,
       startTime: createRecurringBookingDto.startTime,
       endTime: createRecurringBookingDto.endTime,
@@ -199,6 +200,7 @@ export class RecurringBookingsService {
     room.id = updateRecurringBookingDto.roomId;
 
     recurringBookingToUpdate.room = room;
+    recurringBookingToUpdate.title = updateRecurringBookingDto.title;
     recurringBookingToUpdate.startDate = updateRecurringBookingDto.startDate;
     recurringBookingToUpdate.endDate = updateRecurringBookingDto.endDate;
     recurringBookingToUpdate.startTime = updateRecurringBookingDto.startTime;
@@ -312,7 +314,14 @@ export class RecurringBookingsService {
         createRecurringBookingDto.daysOfWeek,
       );
 
-    if (recurringBbookingsAtTheQueryTime.length > 0) {
+    const currentRecurringBooking = recurringBbookingsAtTheQueryTime.find(
+      (b) => b.id === newRecurringBooking.id,
+    );
+
+    if (
+      !currentRecurringBooking &&
+      recurringBbookingsAtTheQueryTime.length > 0
+    ) {
       throw new ServiceException(
         `Room with ${createRecurringBookingDto.roomId} will be occupied by another recurring meeting at the query time. Try another time.`,
         400,

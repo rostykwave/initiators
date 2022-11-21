@@ -12,6 +12,7 @@ export class BookingsMapper {
       const bookingDto = new BookingDto();
       bookingDto.id = oneTimeBooking.id;
       bookingDto.createdAt = oneTimeBooking.createdAt;
+      bookingDto.title = oneTimeBooking.title;
       bookingDto.isRecurring = false;
       bookingDto.meetingDate = oneTimeBooking.meetingDate;
       bookingDto.startTime = oneTimeBooking.startTime;
@@ -58,6 +59,7 @@ export class BookingsMapper {
           const bookingDto = new BookingDto();
           bookingDto.id = recurringBooking.id;
           bookingDto.createdAt = recurringBooking.createdAt;
+          bookingDto.title = recurringBooking.title;
           bookingDto.isRecurring = true;
           bookingDto.meetingDate = parseDateStringWithoutTime(nextDate);
           bookingDto.startTime = recurringBooking.startTime;

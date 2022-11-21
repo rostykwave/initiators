@@ -28,6 +28,9 @@ export class RecurringBooking {
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
+  @Column()
+  title: string;
+
   @Column({ type: 'date' })
   startDate: Date;
 

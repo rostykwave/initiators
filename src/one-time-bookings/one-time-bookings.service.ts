@@ -72,6 +72,7 @@ export class OneTimeBookingsService {
 
     const newOneTimeBooking = await this.oneTimeBookingsRepository.create({
       createdAt: new Date(),
+      title: createOneTimeBookingDto.title,
       meetingDate: createOneTimeBookingDto.meetingDate,
       startTime: createOneTimeBookingDto.startTime,
       endTime: createOneTimeBookingDto.endTime,
@@ -194,6 +195,7 @@ export class OneTimeBookingsService {
     room.id = updateOneTimeBookingDto.roomId;
 
     oneTimeBookingToUpdate.room = room;
+    oneTimeBookingToUpdate.title = updateOneTimeBookingDto.title;
     oneTimeBookingToUpdate.meetingDate = updateOneTimeBookingDto.meetingDate;
     oneTimeBookingToUpdate.startTime = updateOneTimeBookingDto.startTime;
     oneTimeBookingToUpdate.endTime = updateOneTimeBookingDto.endTime;
@@ -202,6 +204,7 @@ export class OneTimeBookingsService {
     try {
       await this.checkAvaliabilityOfRoomForSpecificTime(
         updateOneTimeBookingDto,
+        id,
       );
     } catch (error) {
       if (error instanceof ServiceException) {
@@ -292,6 +295,7 @@ export class OneTimeBookingsService {
 
   private async checkAvaliabilityOfRoomForSpecificTime(
     createOneTimeBookingDto: CreateOneTimeBookingDto,
+    currentOneTimeBookingId?: number,
   ): Promise<any> {
     const bookingsAtTheQueryTime =
       await this.oneTimeBookingsRepository.findAllByRoomIdInRange(
@@ -301,7 +305,11 @@ export class OneTimeBookingsService {
         createOneTimeBookingDto.endTime,
       );
 
-    if (bookingsAtTheQueryTime.length > 0) {
+    const currentOneTimeBooking = bookingsAtTheQueryTime.find(
+      (b) => b.id === currentOneTimeBookingId,
+    );
+
+    if (!currentOneTimeBooking && bookingsAtTheQueryTime.length > 0) {
       throw new ServiceException(
         `Room with ${createOneTimeBookingDto.roomId} will be occupied by another one-time meeting at the query time. Try another time.`,
         400,
