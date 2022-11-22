@@ -40,7 +40,6 @@ export class AuthController {
     return req.user;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
     try {
@@ -54,7 +53,6 @@ export class AuthController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     try {
