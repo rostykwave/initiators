@@ -7,6 +7,6 @@ export class AdminService {
   constructor(private readonly accountsService: AccountsService) {}
 
   async createBasicAccounts(emails: string[]): Promise<Account> {
-    return this.accountsService.createBasicAccounts(emails);
+    return await this.accountsService.createBasicAccounts(emails);
   }
 }
