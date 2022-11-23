@@ -6,6 +6,7 @@ import { generator } from 'ts-password-generator';
 import { Account } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { EmailService } from '../email/email.service';
+import { ServiceException } from 'src/bookings/exceptions/service.exception';
 
 @Injectable()
 export class AccountsService {
@@ -26,12 +27,23 @@ export class AccountsService {
   }
 
   async createBasicAccounts(emails: string[]): Promise<any> {
-    emails.forEach((email) => {
-      this.createBasicAccount(email);
-    });
+    // Make sure emails are unique
+    const uniqueEmails = [...new Set(emails)];
+
+    const basicAccounts = [];
+
+    for (let i = 0; i < uniqueEmails.length; i += 1) {
+      const basicAccount = await this.createBasicAccount(uniqueEmails[i]);
+      if (basicAccount) {
+        const { firstName, lastName, password, ...rest } = basicAccount;
+        basicAccounts.push(rest);
+      }
+    }
+
+    return basicAccounts;
   }
 
-  async createBasicAccount(email: string): Promise<any> {
+  async createBasicAccount(email: string): Promise<Account> {
     const candidate = await this.getAccountByEmail(email);
     if (!candidate) {
       const accountBasic = new Account();
@@ -39,8 +51,18 @@ export class AccountsService {
       accountBasic.email = email;
       accountBasic.password = await bcrypt.hash(password, 5);
       await this.emailService.sendInvitationEmail(email, password);
-      return this.accountRepository.save(accountBasic);
+      return await this.accountRepository.save(accountBasic);
     }
+    if (candidate && !candidate.approved) {
+      const newPassword: string = generator({ haveNumbers: true });
+      candidate.password = await bcrypt.hash(newPassword, 5);
+      await this.emailService.sendInvitationEmail(email, newPassword);
+      return await this.accountRepository.save(candidate);
+    }
+    throw new ServiceException(
+      `Account with email ${email} already registered`,
+      400,
+    );
   }
 
   async findAll(): Promise<Account[]> {
